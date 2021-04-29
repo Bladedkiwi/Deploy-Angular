@@ -1,0 +1,15 @@
+<!--Toggle the paragraph details to show on click-->
+<button class="btn btn-info btn-xs" (click)="onShowDetails()">Display</button>
+
+<!--Add a paragraph with items that get shown dynamically-->
+<p *ngIf="!showDetails; else noDetails"></p>
+<ng-template #noDetails>Secret Password= tuna</ng-template>
+<ul>
+<li
+  *ngFor="let count of clickCount"
+  [ngClass]="{beWhite: count >= 5}"
+  [ngStyle]="{backgroundColor: count >= 5 ? 'blue' : 'tan'}"
+>
+  {{ count }}
+</li>
+</ul>

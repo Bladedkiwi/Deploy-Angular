@@ -1,0 +1,17 @@
+<!--
+Add input field which updates a property('username') via Two-Way binding
+Output the username property with string interpolation: paragraph below input
+add a button which may only be clicked it the username is not an empty string
+onclick, username should be reset to an empty string
+-->
+<div class="panel panel-heading">
+  <input [(ngModel)]="userName" class="form-control" type="text">
+
+  <p>{{ userName }}</p>
+
+  <button (click)="resetUserField($event)" [disabled]="allowReset()" class="btn btn-primary" type="button">Reset User
+    Name
+  </button>
+</div>
+
+

@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="wk-2-tutorials" pattern="file[wdd430]:wk-2-tutorials/src/app//*" />
+</component>

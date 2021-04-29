@@ -1,0 +1,32 @@
+<label>Server Name</label>
+<!--&lt;!&ndash;When event binding, the $event is the reserved term for passing the event in&ndash;&gt;-->
+<!--<input (input)="onUpdateServerName($event)" class="form-control" type="text">-->
+
+<!--Two-Way data binding: Outputs the base server name, and allows for changing of that value
+The value entered in the first input section also updates this input section below because it's two-ways -->
+<input [(ngModel)]="serverName" class="form-control" type="text">
+
+<!--&lt;!&ndash;Good use for String Interpolation because it outputs simple data to the template&ndash;&gt;-->
+<!--<p>{{ serverName }}</p>-->
+
+<div class="panel panel-info">
+  <!--  Property binding [disabled] - Directly binds to the native disabled html property-->
+  <!--  Event Binding: (click) is the handling of the click event similar to the onclick from html-->
+  <button (click)="onServerCreation()" [disabled]="!allowNewServer" class="btn btn-primary">Add Server</button>
+
+  <!--
+  Use cases:
+  Property Binding: Changing the HTML element or directives or a component
+  String Interpolation: output like adding text to the template
+  Don't mix the two-->
+<!--  <p [innerText]> {{ serverCreationStatus }}</p>-->
+
+<!--  ngIf is the conditional attribute for an element-->
+  <p *ngIf="serverCreated; else noServer">{{ serverCreationStatus }}</p>
+
+<!--  # is a marker or reference point for an else statement for the ngIf-->
+  <ng-template #noServer><p>{{ serverCreationStatus }}</p></ng-template>
+
+<!--  ngFor an attribute directive that can be used similarly to a for loop. The layout is to define a variable with let, and define what you would be looping over to display-->
+  <app-server *ngFor="let server of servers"></app-server>
+</div>

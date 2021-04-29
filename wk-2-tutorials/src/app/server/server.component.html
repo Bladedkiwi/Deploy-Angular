@@ -1,0 +1,9 @@
+<!--String Interpolation: Basically, injecting dynamic content into the page-->
+<!--ngStyle an attribute directive acting like an attribute and also using property binding to configure it-->
+<!--ngClass an attribute directive that alters the class styles of an element-->
+<p class="panel panel-default"
+   [ngStyle]="{backgroundColor: getColor()}"
+   [ngClass]="{online: serverStatus === 'online'}"
+>
+  {{ 'Server' }} with ID {{ serverId }} is {{ getServerStatus() }}
+</p>
