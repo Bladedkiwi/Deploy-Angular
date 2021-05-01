@@ -1,0 +1,59 @@
+<div class="row">
+  <div class="col-md-5">
+    <!--    First part of the grid is smaller for the recipe item-->
+    <!--    New Recipe Button-->
+    <div class="row">
+      <div class="col-xs-12">
+        <button class="btn btn-success">New Recipe</button>
+      </div>
+    </div>
+    <hr>
+    <!--        Recipe List Item-->
+    <div class="row">
+      <div class="col-xs-12">
+
+        <!--            List link-->
+        <a
+          *ngFor="let recipe of recipes"
+          class="list-group-item clearfix"
+          href="#"
+        >
+          <!--            List Content-->
+          <div class="pull-left">
+
+            <!--              Content Title-->
+            <h4 class="list-group-item-heading">{{ recipe.name }}</h4>
+
+            <!--            Content Description-->
+            <p class="list-group-item-text">{{ recipe.description }}</p>
+
+            <!--            Content Ingredients - Collapsible-->
+            <!--                <ul class="list-group-item">-->
+            <!--                <li role="button" class="dropdown-toggle list-group-item-heading"><a href="#">Ingredients <span class="caret"></span></a>-->
+            <!--                  <ul class="dropdown-menu list-group-item-info">-->
+            <!--                    <li *ngFor="let ingredient of recipe.ingredients" class="list-group-item">- {{ ingredient }}</li>-->
+            <!--                  </ul>-->
+            <!--                </li>-->
+            <!--                </ul>-->
+          </div>
+
+          <!--            Content Image-->
+          <span class="pull-right">
+              <img
+                [alt]="recipe.name"
+                [src]="recipe.imgPath"
+                class="img-thumbnail img-responsive"
+                style="max-height: 50px">
+              </span>
+
+        </a>
+
+      </div>
+    </div>
+    <app-recipe-item></app-recipe-item>
+  </div>
+  <div class="col-md-7">
+    <!--    Second part of the grid is larger for the details-->
+    <app-recipe-detail></app-recipe-detail>
+  </div>
+</div>
