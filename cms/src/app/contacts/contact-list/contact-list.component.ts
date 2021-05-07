@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { Contact} from '../contact.model';
 
 @Component({
@@ -6,8 +6,17 @@ import { Contact} from '../contact.model';
   templateUrl: './contact-list.component.html',
   styleUrls: ['./contact-list.component.css']
 })
+
+/**
+ * ContactListComponent
+ * Responsible for displaying the list of contacts that the end user has access to
+ */
 export class ContactListComponent implements OnInit {
-  contacts: Contact[] = [
+  // User selected Contact's information
+  @Output() selectedContactEvent = new EventEmitter<Contact>();
+
+  // List of current Contacts saved
+  contactList: Contact[] = [
     new Contact(
       '1',
       'R. Kent',
@@ -29,6 +38,15 @@ export class ContactListComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
+  }
+
+  /**
+   * OnSelected
+   * When a user selects a contact, this method sends that contact's information to be shown in the details
+   * @param contact selected contact object
+   */
+  onSelected(contact: Contact): void {
+    this.selectedContactEvent.emit(contact);
   }
 
 }

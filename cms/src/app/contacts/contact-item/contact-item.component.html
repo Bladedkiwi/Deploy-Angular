@@ -1,1 +1,14 @@
-<p>contact-item works!</p>
+<!--            List link-->
+<a class="list-group-item clearfix" href="#">
+  <!--            List Content-->
+  <div class="pull-left">
+    <!--              Content Title-->
+    <h4 class="list-group-item-heading">Bro. {{ nextContact.lastName }}</h4>
+  </div>
+  <span class="pull-right">
+              <img
+                [alt]="nextContact.firstName + nextContact.lastName"
+                [src]="nextContact.imageUrl"
+                class="img-thumbnail img-responsive" style="max-height:3.5em">
+              </span>
+</a>

@@ -12,20 +12,9 @@
 <!--        Recipe List Item-->
 <div class="panel-body">
 
-    <!--            List link-->
-    <a class="list-group-item clearfix" href="#" *ngFor="let contact of contacts">
-      <!--            List Content-->
-      <div class="pull-left">
-        <!--              Content Title-->
-        <h4 class="list-group-item-heading">Bro. {{ contact.lastName }}</h4>
-      </div>
-      <span class="pull-right">
-              <img
-                [alt]="contact.firstName + contact.lastName"
-                [src]="contact.imageUrl"
-                class="img-thumbnail img-responsive" style="max-height:3.5em">
-              </span>
-    </a>
+    <cms-contact-item *ngFor="let contact of contactList"
+                      [nextContact]="contact"
+                      (click)="onSelected(this.contact)"></cms-contact-item>
 
   </div>
 </div>

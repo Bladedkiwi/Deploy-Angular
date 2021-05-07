@@ -1,8 +1,11 @@
-<cms-header></cms-header>
+<!--SelectedFeatureEvent detects and passes it's retrieved data to the event handler-->
+<cms-header (selectedFeatureEvent)="switchView($event)"></cms-header>
 <div class="container-fluid">
   <div class="row">
-    <div class="col-md-12">
-      <cms-contacts></cms-contacts>
+    <div class="col-md-12" [ngSwitch]="selectedFeature">
+      <cms-documents *ngSwitchCase="'documents'"></cms-documents>
+      <cms-message-list *ngSwitchCase="'messages'"></cms-message-list>
+      <cms-contacts *ngSwitchCase="'contacts'"></cms-contacts>
     </div>
   </div>
 </div>
