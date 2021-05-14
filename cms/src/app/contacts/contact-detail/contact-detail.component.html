@@ -1,8 +1,9 @@
 <div class="panel panel-default">
   <div class="panel-heading clearfix">
-  <h3 class="">Bro. {{nextContactInfo?.name}}</h3>
+  <h3 class="">{{nextContactInfo?.name}}</h3>
   <span class="panel-info clearfix">
               <img
+                *ngIf="nextContactInfo?.imageUrl != ' '"
                 [alt]="nextContactInfo?.name"
                 [src]="nextContactInfo?.imageUrl"
                 class="img-thumbnail img-responsive" style="max-height:8em">

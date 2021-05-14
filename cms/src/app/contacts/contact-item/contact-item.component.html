@@ -3,9 +3,9 @@
   <!--            List Content-->
   <div class="pull-left">
     <!--              Content Title-->
-    <h4 class="list-group-item-heading">Bro. {{ nextContact.name }}</h4>
+    <h4 class="list-group-item-heading">{{ nextContact.name }}</h4>
   </div>
-  <span class="pull-right">
+  <span class="pull-right" *ngIf="nextContact?.imageUrl != ' '">
               <img
                 [alt]="nextContact.name"
                 [src]="nextContact.imageUrl"

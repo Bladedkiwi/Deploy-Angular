@@ -6,6 +6,13 @@ import { ContactService } from '../contact.service';
   selector: 'cms-contact-list',
   templateUrl: './contact-list.component.html',
   styleUrls: ['./contact-list.component.css']
+  /*
+  If including providers here in the @Component, this limits the provider scope by keeping the
+  service all to this component.
+  So, this component and its descendants can have access to the service, but other components in the same module can't
+  https://angular.io/guide/providers
+   */
+  // providers: [ContactService]
 })
 
 /**
