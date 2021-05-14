@@ -1,5 +1,6 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { Contact} from '../contact.model';
+import { ContactService } from '../contact.service';
 
 @Component({
   selector: 'cms-contact-list',
@@ -13,31 +14,24 @@ import { Contact} from '../contact.model';
  */
 export class ContactListComponent implements OnInit {
   // User selected Contact's information
-  @Output() onSelectedContactEvent = new EventEmitter<Contact>();
+  // @Output() onSelectedContactEvent = new EventEmitter<Contact>();
 
-  // List of current Contacts saved
-  contactList: Contact[] = [
-    new Contact(
-      '1',
-      'R. Kent',
-      'Jackson',
-      'jacksonk@byui.edu',
-      '208-496-3771',
-      '../../assets/images/jacksonk.jpg',
-      null),
-    new Contact(
-      '2',
-      'Rex',
-      'Barzee',
-      'barzeer@byui.edu',
-      '208-496-3768',
-      '../../assets/images/barzeer.jpg',
-      null
-    )
-  ];
-  constructor() { }
+  // List holder for current Contacts
+  contactList: Contact[] = [];
 
+  /**
+   * Constructor
+   * Injects the current list of contacts from an external location
+   * @param contactService The service that fetch's the Contact List
+   */
+  constructor(private contactService: ContactService) { }
+
+  /**
+   * ngOnInit
+   * Initializes the retrieval of the ContactList and saves it to its respective variable.
+   */
   ngOnInit(): void {
+    this.contactList = this.contactService.getContactList();
   }
 
   /**
@@ -46,7 +40,7 @@ export class ContactListComponent implements OnInit {
    * @param contact selected contact object
    */
   onSelected(contact: Contact): void {
-    this.onSelectedContactEvent.emit(contact);
+    this.contactService.selectedContactEvent.emit(contact);
   }
 
 }

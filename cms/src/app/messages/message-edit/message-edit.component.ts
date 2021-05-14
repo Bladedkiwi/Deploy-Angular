@@ -1,5 +1,7 @@
-import {Component, ElementRef, OnInit, Output, ViewChild, EventEmitter} from '@angular/core';
+import {Component, ElementRef, OnInit, Output, ViewChild, EventEmitter, Input} from '@angular/core';
 import {Message} from '../message.model';
+import {MessageService} from '../message.service';
+import {Ingredient} from '../../../../../cookbook/src/app/shared/ingredient.model';
 
 @Component({
   selector: 'cms-message-edit',
@@ -26,12 +28,10 @@ export class MessageEditComponent implements OnInit {
   onMessageSend(): void {
     this.msgCreated.emit(
       new Message(
-        5,
+        '6',
         this.userSubject.nativeElement.value,
         this.userMsg.nativeElement.value,
-        'Captain Awesome'));
-
-    // Best practice to clear message values after sending
+        '5'));
     this.onMessageClear();
   }
 
