@@ -1,1 +1,35 @@
-<p>document-detail works!</p>
+<div class="panel panel-default" xmlns="http://www.w3.org/1999/html">
+  <div class="panel-heading">
+    <div class="row pad-all">
+
+      <!--      String Interpolation Operators:
+                  ! = prevents type checker from throwing an error for items being null or undefined
+                  ? = Avoids null and undefined values in property paths
+                      - Helpful for when data is fetched async and the data is technically null/undefined for the moment
+                      https://stackoverflow.com/questions/42364184/why-use-operator-in-template-binding
+                  $any = prevents triggering a type error
+                  | = basic functions that receive an input value and return a transformed value
+                  -->
+      <h4 class="title margin-left-right">{{nextDocumentInfo?.name}}</h4>
+      <div class="row pull-right margin-left-right">
+        <a class="btn btn-primary">View</a>
+        <a class="btn btn-info">Edit</a>
+        <a class="btn btn-danger">Delete</a>
+      </div>
+    </div>
+  </div>
+  <div class="panel-body">
+    <div class="pad-left-right">
+      <div class="row" *ngIf="nextDocumentInfo?.description">
+        <label>Description:</label>
+        <span class="label-value"> {{ nextDocumentInfo?.description }}</span>
+      </div>
+      <br>
+      <div class="row" *ngIf="nextDocumentInfo?.url">
+        <label>URL:</label>
+        <span class="label-value"><a href="{{ nextDocumentInfo?.url }}"> {{ nextDocumentInfo?.url }}</a></span>
+      </div>
+    </div>
+  </div>
+</div>
+

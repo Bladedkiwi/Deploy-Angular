@@ -5,7 +5,7 @@
           Since this tag is apart of the contact-list, the event is the one we created with the emitter which is also
           this locally referenced variable.
           So, onClick the Contact is retrieved and saved/dealt with at the same time.-->
-    <cms-contact-list (selectedContactEvent)="selectedContact = $event"></cms-contact-list>
+    <cms-contact-list (onSelectedContactEvent)="selectedContact = $event"></cms-contact-list>
   </div>
   <div class="col-md-4">
 <!--    Displays the selected contacts' details/info depending on if they have content-->

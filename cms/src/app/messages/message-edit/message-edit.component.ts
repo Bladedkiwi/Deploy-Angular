@@ -30,6 +30,9 @@ export class MessageEditComponent implements OnInit {
         this.userSubject.nativeElement.value,
         this.userMsg.nativeElement.value,
         'Captain Awesome'));
+
+    // Best practice to clear message values after sending
+    this.onMessageClear();
   }
 
   onMessageClear(): void {

@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
+import { Document } from '../document.model';
 
 @Component({
   selector: 'cms-document-detail',
@@ -11,6 +12,7 @@ import { Component, OnInit } from '@angular/core';
  * Displays detailed information about the document with options to view, edit, or delete the document
  */
 export class DocumentDetailComponent implements OnInit {
+  @Input() nextDocumentInfo: Document;
 
   constructor() { }
 

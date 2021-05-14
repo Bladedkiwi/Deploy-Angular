@@ -13,7 +13,7 @@ import { Contact} from '../contact.model';
  */
 export class ContactListComponent implements OnInit {
   // User selected Contact's information
-  @Output() selectedContactEvent = new EventEmitter<Contact>();
+  @Output() onSelectedContactEvent = new EventEmitter<Contact>();
 
   // List of current Contacts saved
   contactList: Contact[] = [
@@ -46,7 +46,7 @@ export class ContactListComponent implements OnInit {
    * @param contact selected contact object
    */
   onSelected(contact: Contact): void {
-    this.selectedContactEvent.emit(contact);
+    this.onSelectedContactEvent.emit(contact);
   }
 
 }

@@ -7,6 +7,7 @@ import { Component, OnInit, EventEmitter, Output } from '@angular/core';
 })
 export class HeaderComponent implements OnInit {
   @Output() selectedFeatureEvent = new EventEmitter<string>();
+  // @Output() selectedUserMenuEvent = new EventEmitter<any>();
 
   constructor() { }
 

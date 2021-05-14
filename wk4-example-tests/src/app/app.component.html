@@ -1,0 +1,119 @@
+<div class="container">
+  <div class="row">
+    <div class="col-xs-12">
+      <button
+        (click)="onlyOdd = !onlyOdd"
+        class="btn btn-primary">Only show odd numbers
+      </button>
+      <br><br>
+      <ul class="list-group">
+        <li class="list-group-item">ngClass adds the desired class if the following expression is true</li>
+        <li class="list-group-item">ngStyle adds the desired style if the following expression is true</li>
+      </ul>
+      <ul class="list-group">
+        <div *ngIf="onlyOdd">
+
+          <li
+            *ngFor="let odd of oddNumbers"
+            [ngClass]="{odd: odd % 2 !== 0}"
+            [ngStyle]="{backgroundColor: odd % 2 !== 0 ? 'yellow' : 'transparent'}"
+            class="list-group-item">
+            {{ odd }}
+          </li>
+        </div>
+
+        <ul class="list-group">
+          <li class="list-group-item">* indicates a structural directive. There's no star operator, angular translates
+            it.
+          </li>
+          <li class="list-group-item">Angular translates the * into a ngTemplate essentially.</li>
+          <li class="list-group-item">ngTemplate is an element that's not rendered like the template tag.
+            <ul>
+              <li>Allows for adding customizable elements that activate on events or conditions.</li>
+            </ul>
+          </li>
+          <li class="list-group-item">Creating a custom structural directive follows similar rules as an attribute
+            directive.
+            <ul>
+              <li>The constructor should initialize the TemplateRef of any type and the ViewContainerRef</li>
+              <li>Then, with a set @Input method, you can alter the template to show or not via the createEmbeddedView
+                method from the ViewContainerRef
+              </li>
+            </ul>
+          </li>
+        </ul>
+        <!--<div *ngIf="!onlyOdd">-->
+        <!--<li-->
+        <!--class="list-group-item"-->
+        <!--[ngClass]="{odd: even % 2 !== 0}"-->
+        <!--[ngStyle]="{backgroundColor: even % 2 !== 0 ? 'yellow' : 'transparent'}"-->
+        <!--*ngFor="let even of evenNumbers">-->
+        <!--{{ even }}-->
+        <!--</li>-->
+        <!--</div>-->
+        <!--<ng-template [ngIf]="!onlyOdd">-->
+        <!--<div>-->
+        <!--<li-->
+        <!--class="list-group-item"-->
+        <!--[ngClass]="{odd: even % 2 !== 0}"-->
+        <!--[ngStyle]="{backgroundColor: even % 2 !== 0 ? 'yellow' : 'transparent'}"-->
+        <!--*ngFor="let even of evenNumbers">-->
+        <!--{{ even }}-->
+        <!--</li>-->
+        <!--</div>-->
+        <!--</ng-template>-->
+        <div *appUnless="onlyOdd">
+          <li
+            *ngFor="let even of evenNumbers"
+            [ngClass]="{odd: even % 2 !== 0}"
+            [ngStyle]="{backgroundColor: even % 2 !== 0 ? 'yellow' : 'transparent'}"
+            class="list-group-item">
+            {{ even }}
+          </li>
+        </div>
+      </ul>
+      <ul class="list-group">
+        <li class="list-group-item">@Directive to create a custom directive to use/modify.
+          <ul>
+            <li class="list-group-item">selector is required - either by element p or attribute style [p]</li>
+          </ul>
+        </li>
+        <li class="list-group-item">Directive Instances that are created need a reference to the element that it was
+          created on via a parameter in the constructor method.
+          <ul>
+            <li>Use private to provide access to the element</li>
+          </ul>
+        </li>
+        <li class="list-group-item">Changing the exact element best done in ngOnInit
+          <ul>
+            <li>Altering through the DOM via nativeElement is <em>not</em> the best practice</li>
+            <li>Best practice is to manipulate the DOM through Renderer2 and its setStyle() method.</li>
+            <li><a href="https://angular.io/api/core/Renderer2">More on Renderer2</a></li>
+            <li>Easiest way to alter color is through @HostBinding with the 'style.backgroundColor'.</li>
+          </ul>
+        </li>
+        <li class="list-group-item">Remember to add the custom directive to the module file</li>
+        <li class="list-group-item">No brackets are needed for the element for basic use like having the green highlight
+          as a default
+        </li>
+        <li class="list-group-item">@HostListener convenient way to listen to events on the element like mouseenter or
+          mouseleave
+        </li>
+        <li class="list-group-item">Adding @Input default/altered values to child component allows for access from the
+          html file and easy changing.
+        </li>
+        <li class="list-group-item"></li>
+
+      </ul>
+      <p appBasicHighlight>Style me with basic directive!</p>
+      <p [appBetterHighlight]="'red'" defaultColor="yellow">Style me with a better directive!</p>
+
+      <div [ngSwitch]="value">
+        <p *ngSwitchCase="5">Value is 5</p>
+        <p *ngSwitchCase="10">Value is 10</p>
+        <p *ngSwitchCase="100">Value is 100</p>
+        <p *ngSwitchDefault>Value is Default</p>
+      </div>
+    </div>
+  </div>
+</div>
