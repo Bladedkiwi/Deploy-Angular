@@ -1,1 +1,26 @@
-/* You can add global styles to this file, and also import other style files */
+/* You can add global styles to this file, and also import other style files *
+ */
+body {
+  background-color: tan;
+}
+.panel {
+  border: 2px solid #6a0707 ;
+  box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
+
+}
+.btn-danger {
+  background-color: rgba(179, 57, 57, 0.8);
+}
+.btn-primary {
+  background-color: rgba(60, 69, 151, 0.82);
+}
+.btn-success {
+  background-color: #687d67;
+}
+/*.active {*/
+/*  background-color: rgba(106, 7, 7, 0.82);*/
+/*  border-color: #6a0707;*/
+/*}*/
+/*.active:hover {*/
+/*  background-color: #6a0707 ;*/
+/*}*/

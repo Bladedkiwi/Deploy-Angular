@@ -1,6 +1,6 @@
-import { Injectable, Output, EventEmitter } from '@angular/core';
-import { Contact } from './contact.model';
-import { MOCKCONTACTS } from './MOCKCONTACTS';
+import {EventEmitter, Injectable} from '@angular/core';
+import {Contact} from './contact.model';
+import {MOCKCONTACTS} from './MOCKCONTACTS';
 
 // @Injectable marks the class as on that takes part in dependency injection system
 /*
@@ -44,6 +44,7 @@ export class ContactService {
 
   contactList: Contact[] = [];
   selectedContactEvent = new EventEmitter<Contact>();
+  deleteSelectedContactEvent = new EventEmitter<Contact[]>();
 
   /**
    * Constructor -
@@ -68,5 +69,17 @@ export class ContactService {
    */
   getContactById(id: string): Contact {
     return this.contactList.find(contact => (contact.id === id ? contact : null));
+  }
+
+  deleteContact(contact: Contact): Contact[] {
+    if (!contact) {
+      return;
+    }
+    const pos = this.contactList.indexOf(contact);
+    if (pos < 0) {
+      return;
+    }
+    this.contactList.splice(pos, 1);
+    this.deleteSelectedContactEvent.emit(this.contactList.slice());
   }
 }

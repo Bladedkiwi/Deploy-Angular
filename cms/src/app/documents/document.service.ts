@@ -1,6 +1,6 @@
-import { Injectable, EventEmitter } from '@angular/core';
-import { Document } from './document.model';
-import { MOCKDOCUMENTS } from './MOCKDOCUMENTS';
+import {EventEmitter, Injectable} from '@angular/core';
+import {Document} from './document.model';
+import {MOCKDOCUMENTS} from './MOCKDOCUMENTS';
 
 @Injectable({
   providedIn: 'root'
@@ -8,6 +8,7 @@ import { MOCKDOCUMENTS } from './MOCKDOCUMENTS';
 export class DocumentService {
   documentList: Document[] = [];
   selectedDocumentEvent = new EventEmitter<Document>();
+  deleteSelectedDocumentEvent = new EventEmitter<Document[]>();
 
   constructor() {
     this.documentList = MOCKDOCUMENTS;
@@ -27,6 +28,23 @@ export class DocumentService {
    * @param id The requested document's Id
    */
   getDocumentListById(id: string): Document {
-    return this.documentList.find(document => (document.id === id ? document : null ));
+    // console.log(id);
+    return this.documentList.find(document => (document.id === id ? document : null));
+  }
+
+  deleteDocument(document: Document): Document[] {
+    // Is it a document
+    if (!document) {
+      return;
+    }
+    // Get index of current document, if there
+    const pos = this.documentList.indexOf(document);
+    if (pos < 0) {
+      return;
+    }
+    // Delete selected document, emit the updated list
+    this.documentList.splice(pos, 1);
+    this.deleteSelectedDocumentEvent.emit(this.documentList.slice());
+
   }
 }

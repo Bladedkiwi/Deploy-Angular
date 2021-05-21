@@ -1,11 +1,14 @@
 <!--SelectedFeatureEvent detects and passes it's retrieved data to the event handler-->
-<cms-header (selectedFeatureEvent)="switchView($event)"></cms-header>
+<!--<cms-header (selectedFeatureEvent)="switchView($event)"></cms-header>-->
+<cms-header></cms-header>
 <div class="container-fluid">
   <div class="row">
-    <div class="col-md-12" [ngSwitch]="selectedFeature">
-      <cms-documents *ngSwitchCase="'documents'"></cms-documents>
-      <cms-message-list *ngSwitchCase="'messages'"></cms-message-list>
-      <cms-contacts *ngSwitchCase="'contacts'"></cms-contacts>
-    </div>
+<!--    Router Outlet is the Outlet or gathering location for all pages content needs to be routed into for display-->
+    <router-outlet></router-outlet>
+<!--    <div class="col-md-12" [ngSwitch]="selectedFeature">-->
+<!--      <cms-documents *ngSwitchCase="'documents'"></cms-documents>-->
+<!--      <cms-message-list *ngSwitchCase="'messages'"></cms-message-list>-->
+<!--      <cms-contacts *ngSwitchCase="'contacts'"></cms-contacts>-->
+<!--    </div>-->
   </div>
 </div>

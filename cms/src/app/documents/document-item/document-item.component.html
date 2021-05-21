@@ -1,4 +1,4 @@
-<a class="list-group-item clearfix documentDiv" *ngIf="nextDocument?.name" >
+<a class="list-group-item clearfix documentDiv" [routerLink]="nextDocument.id" routerLinkActive="active" *ngIf="nextDocument?.name" >
   <!-- Display document name here -->
 {{nextDocument.name}}
 </a>
