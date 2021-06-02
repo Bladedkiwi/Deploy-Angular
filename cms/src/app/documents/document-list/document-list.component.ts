@@ -1,7 +1,8 @@
-import {Component, OnInit} from '@angular/core';
-import { Document } from '../document.model';
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Document} from '../document.model';
 import {DocumentService} from '../document.service';
-import {ActivatedRoute, Params} from "@angular/router";
+import {Subscription} from "rxjs";
+
 @Component({
   selector: 'cms-document-list',
   templateUrl: './document-list.component.html',
@@ -12,10 +13,11 @@ import {ActivatedRoute, Params} from "@angular/router";
  * DocumentListComponent
  * Responsible for displaying the list of documents that the end user has access to
  */
-export class DocumentListComponent implements OnInit {
+export class DocumentListComponent implements OnInit, OnDestroy {
 
   documentList: Document[] = [];
   nextDocumentId: number;
+  private documentSub: Subscription;
 
   constructor(private documentService: DocumentService) {
     // this.documentList = this.documentService.getDocumentList();
@@ -23,7 +25,12 @@ export class DocumentListComponent implements OnInit {
 
   ngOnInit(): void {
     this.documentList = this.documentService.getDocumentList();
-    this.documentService.deleteSelectedDocumentEvent.subscribe(documentList => this.documentList = documentList);
+    // this.documentService.deleteSelectedDocumentEvent.subscribe(documentList => this.documentList = documentList);
+    this.documentSub = this.documentService.updateListEvent$.subscribe(documentList => this.documentList = documentList);
+  }
+
+  ngOnDestroy(): void {
+    this.documentSub.unsubscribe();
   }
 
   // onSelected(document: Document): void {

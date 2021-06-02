@@ -1,7 +1,8 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Contact} from '../contact.model';
 import {ContactService} from "../contact.service";
 import {ActivatedRoute, Router} from "@angular/router";
+import {Subscription} from "rxjs";
 
 @Component({
   selector: 'cms-contact-detail',
@@ -13,8 +14,9 @@ import {ActivatedRoute, Router} from "@angular/router";
  * ContactDetailComponent
  * Displays detailed information about the contact with options to delete, or clear the contact from view
  */
-export class ContactDetailComponent implements OnInit {
+export class ContactDetailComponent implements OnInit, OnDestroy {
   nextContactInfo: Contact;
+  private contactDetailSub: Subscription;
 
 
   // @ViewChild('contactDetails', {static: true}) contactDetails: ElementRef;
@@ -24,20 +26,24 @@ export class ContactDetailComponent implements OnInit {
 
   ngOnInit(): void {
 
-    this.actRoute.params.subscribe(
+    this.contactDetailSub = this.actRoute.params.subscribe(
       (params) => {
-      if (params.id != null || undefined) {
-        this.nextContactInfo = this.contactService.getContactById(params.id);
-        // console.log(params.id);
+        if (params.id != null || undefined) {
+          this.nextContactInfo = this.contactService.getContactById(params.id);
+          // console.log(params.id);
+        }
       }
-    }
-  );
+    );
 
   }
 
   onDeleteContact(): void {
-    this.contactService.deleteContact(this.nextContactInfo);
+    this.contactService.deleteItem(this.nextContactInfo);
     this.router.navigate(['/contacts']);
+  }
+
+  ngOnDestroy(): void {
+    this.contactDetailSub.unsubscribe();
   }
 
   // onContactClear(): void {

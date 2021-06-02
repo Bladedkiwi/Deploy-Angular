@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {Contact} from '../contact.model';
 
 @Component({
@@ -16,7 +16,8 @@ export class ContactItemComponent implements OnInit {
   // Creating retrieval access for a single contact
   @Input() nextContact: Contact;
 
-  constructor() { }
+  constructor() {
+  }
 
   ngOnInit(): void {
   }

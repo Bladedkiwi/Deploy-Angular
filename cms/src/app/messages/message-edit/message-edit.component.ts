@@ -1,7 +1,5 @@
-import {Component, ElementRef, OnInit, Output, ViewChild, EventEmitter, Input} from '@angular/core';
+import {Component, ElementRef, EventEmitter, OnInit, Output, ViewChild} from '@angular/core';
 import {Message} from '../message.model';
-import {MessageService} from '../message.service';
-import {Ingredient} from '../../../../../cookbook/src/app/shared/ingredient.model';
 
 @Component({
   selector: 'cms-message-edit',
@@ -20,7 +18,8 @@ export class MessageEditComponent implements OnInit {
   @ViewChild('userMsg', {static: true}) userMsg: ElementRef;
   @ViewChild('userSubject', {static: true}) userSubject: ElementRef;
 
-  constructor() { }
+  constructor() {
+  }
 
   ngOnInit(): void {
   }

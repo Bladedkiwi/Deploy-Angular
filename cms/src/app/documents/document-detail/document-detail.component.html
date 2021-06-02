@@ -12,22 +12,22 @@
                   -->
       <h4 class="title margin-left-right">{{ nextDocumentInfo?.name }}</h4>
       <div class="row pull-right margin-left-right">
-        <a class="btn btn-primary" (click)="onViewDocument()">View</a>
-<!--        Remember, document detail is on a route from the document-item, which means the id is already
-              included in the path, so only the edit is needed from the path ':id/edit'-->
+        <a (click)="onViewDocument()" class="btn btn-primary">View</a>
+        <!--        Remember, document detail is on a route from the document-item, which means the id is already
+                      included in the path, so only the edit is needed from the path ':id/edit'-->
         <a class="btn btn-info" routerLink='edit'>Edit</a>
-        <a class="btn btn-danger" (click)="onDeleteDocument()">Delete</a>
+        <a (click)="onDeleteDocument()" class="btn btn-danger">Delete</a>
       </div>
     </div>
   </div>
   <div class="panel-body">
     <div class="pad-left-right">
-      <div class="row" *ngIf="nextDocumentInfo?.description">
+      <div *ngIf="nextDocumentInfo?.description" class="row">
         <label>Description:</label>
         <span class="label-value"> {{ nextDocumentInfo?.description }}</span>
       </div>
       <br>
-      <div class="row" *ngIf="nextDocumentInfo?.url">
+      <div *ngIf="nextDocumentInfo?.url" class="row">
         <label>URL:</label>
         <span class="label-value"><a href="{{ nextDocumentInfo?.url }}"> {{ nextDocumentInfo?.url }}</a></span>
       </div>

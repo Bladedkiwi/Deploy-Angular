@@ -1,6 +1,6 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
-import { Contact} from '../contact.model';
-import { ContactService } from '../contact.service';
+import {Component, OnInit} from '@angular/core';
+import {Contact} from '../contact.model';
+import {ContactService} from '../contact.service';
 
 @Component({
   selector: 'cms-contact-list',
@@ -26,12 +26,14 @@ export class ContactListComponent implements OnInit {
   // List holder for current Contacts
   contactList: Contact[] = [];
 
+
   /**
    * Constructor
    * Injects the current list of contacts from an external location
    * @param contactService The service that fetch's the Contact List
    */
-  constructor(private contactService: ContactService) { }
+  constructor(private contactService: ContactService) {
+  }
 
   /**
    * ngOnInit
@@ -47,7 +49,7 @@ export class ContactListComponent implements OnInit {
    * @param contact selected contact object
    */
   onSelected(contact: Contact): void {
-    this.contactService.selectedContactEvent.emit(contact);
+    this.contactService.selectedContactEvent$.next(contact);
   }
 
 }

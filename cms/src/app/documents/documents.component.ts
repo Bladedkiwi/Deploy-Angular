@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
-import { Document } from './document.model';
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Document} from './document.model';
 import {DocumentService} from './document.service';
+import {Subscription} from "rxjs";
 
 @Component({
   selector: 'cms-documents',
@@ -12,17 +13,22 @@ import {DocumentService} from './document.service';
  * DocumentsComponent
  * The parent component that is responsible for displaying both the document list and any details for each document.
  */
-export class DocumentsComponent implements OnInit {
+export class DocumentsComponent implements OnInit, OnDestroy {
   selectedDocument: Document;
+  private selectedDocumentSub: Subscription;
 
-  constructor(private documentService: DocumentService) { }
+  constructor(private documentService: DocumentService) {
+  }
 
   ngOnInit(): void {
-    this.documentService.selectedDocumentEvent
-      .subscribe((document: Document) =>
-      {
+    this.selectedDocumentSub = this.documentService.selectedDocumentEvent$
+      .subscribe((document: Document) => {
         this.selectedDocument = document;
-    });
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.selectedDocumentSub.unsubscribe();
   }
 
 }

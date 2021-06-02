@@ -5,16 +5,16 @@
     </div>
 
     <div class="collapse navbar-collapse">
-      <ul class="nav navbar-nav" >
-<!--        RouterLink is the actual link element we want pressed for traveling
-            RouterLinkActive allows the addition of a class to alter it's active state.-->
+      <ul class="nav navbar-nav">
+        <!--        RouterLink is the actual link element we want pressed for traveling
+                    RouterLinkActive allows the addition of a class to alter it's active state.-->
         <li routerLinkActive="active"><a routerLink="/documents">Documents</a></li>
         <li routerLinkActive="active"><a routerLink="/messages">Messages</a></li>
         <li routerLinkActive="active"><a routerLink="/contacts">Contacts</a></li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li class="dropdown" cmsDropdownMenu>
-        <li role="button" class="dropdown-toggle" cmsDropdownMenu ><a href="#">User <span class="caret"></span></a>
+        <li class="dropdown-toggle" cmsDropdownMenu role="button"><a href="#">User <span class="caret"></span></a>
           <ul class="dropdown-menu clearfix list-group">
             <li><a href="#">Login</a></li>
             <li><a href="#">Other</a></li>

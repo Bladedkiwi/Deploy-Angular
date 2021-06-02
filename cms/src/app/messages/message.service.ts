@@ -1,6 +1,6 @@
-import { Injectable, EventEmitter } from '@angular/core';
-import { Message } from './message.model';
-import { MOCKMESSAGES} from './MOCKMESSAGES';
+import {EventEmitter, Injectable} from '@angular/core';
+import {Message} from './message.model';
+import {MOCKMESSAGES} from './MOCKMESSAGES';
 
 @Injectable({
   providedIn: 'root'
@@ -19,7 +19,7 @@ export class MessageService {
   }
 
   getMessageById(id: string): Message {
-    return this.messageList.find(message => (message.id === id ? document : null ));
+    return this.messageList.find(message => (message.id === id ? document : null));
   }
 
   addMessageToList(message): void {

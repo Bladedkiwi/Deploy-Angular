@@ -1,24 +1,21 @@
-
-
-
 <!--        Recipe List Item-->
 <div class="panel panel-default">
   <div class="panel-heading clearfix">
-        <!--              Content Title-->
+    <!--              Content Title-->
     <h2 class="pull-left">Contacts</h2>
-      <button type="button" class="btn btn-success panel-info pull-right" routerLink="new">New Contact</button>
+    <button class="btn btn-success panel-info pull-right" routerLink="new" type="button">New Contact</button>
   </div>
 
-<!--        Recipe List Item-->
-<div class="panel-body">
+  <!--        Recipe List Item-->
+  <div class="panel-body">
 
-  <cms-contact-item
-    *ngFor="let contact of contactList"
-    [nextContact]="contact"
-  ></cms-contact-item>
-<!--    <cms-contact-item *ngFor="let contact of contactList"-->
-<!--                      [nextContact]="contact"-->
-<!--                      (click)="onSelected(this.contact)"></cms-contact-item>-->
+    <cms-contact-item
+      *ngFor="let contact of contactList"
+      [nextContact]="contact"
+    ></cms-contact-item>
+    <!--    <cms-contact-item *ngFor="let contact of contactList"-->
+    <!--                      [nextContact]="contact"-->
+    <!--                      (click)="onSelected(this.contact)"></cms-contact-item>-->
 
   </div>
 </div>

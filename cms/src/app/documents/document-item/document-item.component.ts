@@ -1,7 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import { Document } from '../document.model';
-import {ActivatedRoute, Params} from '@angular/router';
-import {DocumentService} from '../document.service';
+import {Document} from '../document.model';
 
 @Component({
   selector: 'cms-document-item',
@@ -17,8 +15,10 @@ import {DocumentService} from '../document.service';
 export class DocumentItemComponent implements OnInit {
   @Input() nextDocument: Document;
   @Input() nextDocumentId: string;
+
   // id: number;
-  constructor() { }
+  constructor() {
+  }
 
   ngOnInit(): void {
     // console.log(this.nextDocumentId);

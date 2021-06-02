@@ -5,38 +5,40 @@
         <div class="col-sm-12 form-group">
           <label for="subject">Subject</label>
           <input
-            type="text"
-            id="subject"
+            #userSubject
             class="form-control"
-          size="120"
-          max="120"
-          #userSubject>
+            id="subject"
+            max="120"
+            size="120"
+            type="text">
         </div>
 
         <div class="col-sm-12 form-group">
           <label for="message">Message</label>
           <input
-            type="text"
-            id="message"
+            #userMsg
             class="form-control"
+            id="message"
             max="255"
             size="120"
-          #userMsg>
+            type="text">
         </div>
       </div>
 
       <div class="row">
         <div class="col-xs-12">
           <button
+            (click)="onMessageSend()"
             class="btn btn-success"
             type="button"
-            (click)="onMessageSend()"
-          >Send</button>
+          >Send
+          </button>
           <button
+            (click)="onMessageClear()"
             class="btn btn-danger"
             type="button"
-            (click)="onMessageClear()"
-          >Clear</button>
+          >Clear
+          </button>
         </div>
       </div>
     </form>

@@ -1,19 +1,19 @@
 <div class="row">
   <div class="col-md-5">
-<!--    selectedContact = $event
-          The locally referenced variable becomes the event in the form of a Contact object model.
-          Since this tag is apart of the contact-list, the event is the one we created with the emitter which is also
-          this locally referenced variable.
-          So, onClick the Contact is retrieved and saved/dealt with at the same time.
-          (onSelectedContactEvent)="selectedContact = $event"
-          -->
-<!--    Contact list is now being generated via the injected service-->
+    <!--    selectedContact = $event
+              The locally referenced variable becomes the event in the form of a Contact object model.
+              Since this tag is apart of the contact-list, the event is the one we created with the emitter which is also
+              this locally referenced variable.
+              So, onClick the Contact is retrieved and saved/dealt with at the same time.
+              (onSelectedContactEvent)="selectedContact = $event"
+              -->
+    <!--    Contact list is now being generated via the injected service-->
     <cms-contact-list></cms-contact-list>
   </div>
   <div class="col-md-4">
     <router-outlet [routerLink]="['new',':id',':id/edit']"></router-outlet>
-<!--    Displays the selected contacts' details/info depending on if they have content-->
-<!--    <cms-contact-detail [nextContactInfo]="selectedContact" *ngIf="selectedContact != null || selectedContact != undefined"></cms-contact-detail>-->
+    <!--    Displays the selected contacts' details/info depending on if they have content-->
+    <!--    <cms-contact-detail [nextContactInfo]="selectedContact" *ngIf="selectedContact != null || selectedContact != undefined"></cms-contact-detail>-->
   </div>
 </div>
 

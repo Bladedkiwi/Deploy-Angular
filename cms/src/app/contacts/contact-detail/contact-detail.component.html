@@ -1,18 +1,18 @@
 <div class="panel panel-default">
   <div class="panel-heading clearfix">
-  <h3 class="">{{nextContactInfo?.name}}</h3>
-  <span class="panel-info clearfix">
+    <h3 class="">{{nextContactInfo?.name}}</h3>
+    <span class="panel-info clearfix">
               <img
                 *ngIf="nextContactInfo?.imageUrl != ' '"
                 [alt]="nextContactInfo?.name"
                 [src]="nextContactInfo?.imageUrl"
                 class="img-thumbnail img-responsive" style="max-height:8em">
               </span>
-    <button class="btn btn-primary pull-right panel-info" type="button" routerLink="edit">Edit</button>
-    <button class="btn btn-danger pull-right panel-info" type="button" (click)="onDeleteContact()">Delete</button>
-    </div>
+    <button class="btn btn-primary pull-right panel-info" routerLink="edit" type="button">Edit</button>
+    <button (click)="onDeleteContact()" class="btn btn-danger pull-right panel-info" type="button">Delete</button>
+  </div>
   <div class="panel-body">
-<h4 class="panel-info">Email: {{nextContactInfo?.email}} </h4>
-<h4 class="panel-info">Phone: {{nextContactInfo?.phone}} </h4>
+    <h4 class="panel-info">Email: {{nextContactInfo?.email}} </h4>
+    <h4 class="panel-info">Phone: {{nextContactInfo?.phone}} </h4>
   </div>
 </div>

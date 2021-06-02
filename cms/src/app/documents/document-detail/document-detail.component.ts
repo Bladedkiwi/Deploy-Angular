@@ -1,8 +1,9 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Document} from '../document.model';
 import {DocumentService} from '../document.service';
-import {ActivatedRoute, Route, Router} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {WindRefService} from "../../wind-ref.service";
+import {Subscription} from "rxjs";
 
 @Component({
   selector: 'cms-document-detail',
@@ -14,11 +15,12 @@ import {WindRefService} from "../../wind-ref.service";
  * DocumentDetailComponent
  * Displays detailed information about the document with options to view, edit, or delete the document
  */
-export class DocumentDetailComponent implements OnInit {
+export class DocumentDetailComponent implements OnInit, OnDestroy {
   // @Input() nextDocumentInfo: Document;
   nextDocumentInfo: Document;
   nextDocumentId: string;
   nativeWindow: any;
+  private documentInfoSub: Subscription;
 
   constructor(private documentService: DocumentService, private windRef: WindRefService, private actRoute: ActivatedRoute, private router: Router) {
 
@@ -26,7 +28,7 @@ export class DocumentDetailComponent implements OnInit {
 
   ngOnInit(): void {
 
-    this.actRoute.params.subscribe(
+    this.documentInfoSub = this.actRoute.params.subscribe(
       (params) => {
         this.nextDocumentId = params.id;
         // console.log(this.nextDocumentId);
@@ -41,8 +43,12 @@ export class DocumentDetailComponent implements OnInit {
   }
 
   onDeleteDocument(): void {
-    this.documentService.deleteDocument(this.nextDocumentInfo);
+    this.documentService.deleteItem(this.nextDocumentInfo);
     this.router.navigate(['/documents']);
+  }
+
+  ngOnDestroy(): void {
+    this.documentInfoSub.unsubscribe();
   }
 
 }

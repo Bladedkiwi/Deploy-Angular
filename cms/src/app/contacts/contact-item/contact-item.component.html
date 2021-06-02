@@ -1,11 +1,11 @@
 <!--            List link-->
-<a class="list-group-item clearfix" href="#" [routerLink]="nextContact.id" routerLinkActive="active">
+<a [routerLink]="nextContact.id" class="list-group-item clearfix" href="#" routerLinkActive="active">
   <!--            List Content-->
   <div class="pull-left">
     <!--              Content Title-->
     <h4 class="list-group-item-heading">{{ nextContact.name }}</h4>
   </div>
-  <span class="pull-right" *ngIf="nextContact?.imageUrl != ' '">
+  <span *ngIf="nextContact?.imageUrl != ' '" class="pull-right">
               <img
                 [alt]="nextContact.name"
                 [src]="nextContact.imageUrl"

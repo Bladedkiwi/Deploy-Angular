@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +11,8 @@ import { Injectable } from '@angular/core';
  */
 export class WindRefService {
 
-  constructor() { }
+  constructor() {
+  }
 
   getNativeWindow(): Window {
     return window;

@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { MessageService } from './message.service';
+import {Component, OnInit} from '@angular/core';
+import {MessageService} from './message.service';
 
 
 @Component({
@@ -10,13 +10,16 @@ import { MessageService } from './message.service';
 export class MessagesComponent implements OnInit {
 
 
-  constructor(private messageService: MessageService) { }
+  constructor(private messageService: MessageService) {
+  }
 
   ngOnInit(): void {
     // this.messageService.selectedMessageEvent.subscribe(message: Message => {
     //   this.selectedMessage = message;
     // });
   }
-  onMessageSend(): void {}
+
+  onMessageSend(): void {
+  }
 
 }
