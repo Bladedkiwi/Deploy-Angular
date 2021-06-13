@@ -79,9 +79,10 @@
               [dropZones]="['contactGroup']"
               (onDropSuccess)="addToGroup($event)"
               >
+            <div class="alert alert-danger ng-invalid " *ngIf="invalidContactMessage">Contact can not be added to the group. It is already in the group or is the current contact.</div>
             <div *ngFor="let c of contactGroupList; index as i">
               <div>
-                <div class="alert alert-danger ng-invalid " *ngIf="invalidContactMessage">Contact can not be added to the group. It is already in the group or is the current contact.</div>
+
                 <cms-contact-item class="col-sm-11" [nextContact]="c"></cms-contact-item>
                   <button class="btn btn-danger col-sm-2 deleteButton" (click)="onRemoveItem(i)">X</button>
               </div>

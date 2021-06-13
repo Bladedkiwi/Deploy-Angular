@@ -67,7 +67,9 @@ export class ContactEditComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.contactEditSub.unsubscribe();
   }
-  onCancel(): void {}
+  onCancel(): void {
+    this.route.navigate(['/contacts']);
+  }
 
   onSubmit(form: NgForm): void {
     // if (!((null ?? this.contact.group) || (undefined ?? this.contact.group))) {
