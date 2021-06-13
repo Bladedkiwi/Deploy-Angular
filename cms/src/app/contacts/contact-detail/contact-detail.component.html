@@ -14,5 +14,11 @@
   <div class="panel-body">
     <h4 class="panel-info">Email: {{nextContactInfo?.email}} </h4>
     <h4 class="panel-info">Phone: {{nextContactInfo?.phone}} </h4>
+    <div class="panel-group" *ngIf="nextContactInfo?.group">
+      <h4 class="panel-info">Contacts in Team:</h4>
+      <div *ngFor="let groupContact of nextContactInfo.group">
+        <cms-contact-item [nextContact]="groupContact"></cms-contact-item>
+      </div>
+    </div>
   </div>
 </div>

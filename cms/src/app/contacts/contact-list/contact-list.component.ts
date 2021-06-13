@@ -30,7 +30,7 @@ export class ContactListComponent implements OnInit {
   /**
    * Constructor
    * Injects the current list of contacts from an external location
-   * @param contactService The service that fetch's the Contact List
+   * @param contactService The service that fetches the Contact List
    */
   constructor(private contactService: ContactService) {
   }

@@ -1,8 +1,7 @@
 import {Injectable} from '@angular/core';
 import {Contact} from './contact.model';
 import {MOCKCONTACTS} from './MOCKCONTACTS';
-import {Subject} from "rxjs";
-import {Document} from "../documents/document.model";
+import {Subject} from 'rxjs';
 
 // @Injectable marks the class as on that takes part in dependency injection system
 /*
@@ -44,19 +43,20 @@ import {Document} from "../documents/document.model";
  */
 export class ContactService {
 
-  itemList: Contact[] = [];
+  contactList: Contact[] = [];
   selectedContactEvent$ = new Subject<Contact>();
   // contactListUpdateEvent$ = new Subject<Contact[]>();
-  updateListEvent$ = new Subject<any[]>();
-  // private contactMaxId: number;
+  updateContactListEvent$ = new Subject<any[]>();
+  private contactMaxId: number;
+  private check = true;
 
   /**
    * Constructor -
    * Stores the Contacts, from an external file, to a list for easy retrieval
    */
   constructor() {
-    this.itemList = MOCKCONTACTS;
-    // this.contactMaxId = this.getMaxId(this.contactList);
+    this.contactList = MOCKCONTACTS;
+    // this.contactMaxId = this.getContactMaxId(this.contactList);
   }
 
   /**
@@ -64,7 +64,7 @@ export class ContactService {
    * Method that retrieves a list of all known contacts
    */
   getContactList(): Contact[] {
-    return this.itemList;
+    return this.contactList;
   }
 
   /**
@@ -73,17 +73,16 @@ export class ContactService {
    * @param id The requested Contact by Id
    */
   getContactById(id: string): Contact {
-    return this.itemList.find(contact => (contact.id === id ? contact : null));
+    return this.contactList.find(contact => (contact.id === id ? contact : null));
   }
 
   /**
    * getMaxId
    * Retrieves the max Id number from a given list.
    * Id must be a string, and included an item of the array
-   * @param maxIdList any provided list
    * @return maxId The number of the highest id in the list.
    */
-  getMaxId(maxIdList: any[]): number {
+  getContactMaxId(): number {
     let maxId = 0;
 
     const chkMax = (id: number) => {
@@ -92,113 +91,126 @@ export class ContactService {
       }
     };
 
-    maxIdList.forEach((item) => {
+    this.contactList.forEach((item) => {
       chkMax(parseFloat(item.id));
     });
 
     return maxId;
   }
 
-  /**
-   * Add Item
-   * General method to add a new  a new object to the current itemList.
-   * Requires the getMaxId(itemList) method to be included in the class.
-   * Requires a subject[] observable updateListEvent$ to be in the class
-   * Requires itemList to be included in class
-   * @param newItem The item to be added to the ItemList
-   * @param itemList The current ItemList
-   */
-  addItem(newItem: any): any[] {
-    if (!newItem) {
+  addContact(newContact: Contact): void {
+
+    // Checks if newContact is null/undefined before assigning a new Id
+    if (!((null ?? newContact.id) || (undefined ?? newContact.id))) {
+      newContact.id = String((this.getContactMaxId() + 1));
+      this.contactList.push(newContact);
+      this.updateContactListEvent$.next(this.contactList.slice());
+    } else {
       return;
     }
-    newItem.id = this.getMaxId(this.itemList);
-    this.itemList.push(newItem);
-    this.updateListEvent$.next(this.itemList.slice());
   }
 
-  /**
-   * UpdateItem
-   * Uses a newItem to replace the originalItem including its Id number. Then, emits the updated list through an Observable
-   * Requires a subject[] observable updateListEvent$ to be in the class
-   * @param originalItem - original item to be altered
-   * @param newItem - new item for replacing the original
-   * @param itemList - current list that needs updating
-   */
-  updateItem(originalItem: any, newItem: any): void {
-    if (!originalItem || !newItem) {
-      return;
+  updateContact(originalContact: Contact, newContact: Contact): void {
+    let pos = 0;
+
+    // Checks null/undefined for original/new cotnact
+    this.check = (!!((null ?? originalContact.id) || (undefined ?? originalContact.id) ||
+      ((null ?? newContact.id) || (undefined ?? newContact.id))));
+
+    if (this.check) {
+      // sets the position of the original contact
+      pos = this.contactList.indexOf(originalContact);
+      if (this.check && !(pos < 0)) {
+        // Update list with new contact if position is a real number and check is true
+        newContact.id = originalContact.id;
+        this.contactList[pos] = newContact;
+        this.updateContactListEvent$.next(this.contactList.slice());
+      }
     }
-    // current index of item if there
-    const pos = this.itemList.indexOf(originalItem);
-    if (pos < 0) {
-      return;
-    }
-    newItem.id = originalItem.id;
-    this.itemList[pos] = newItem;
-    this.updateListEvent$.next(this.itemList.slice());
+    else {return; }
   }
 
-  /**
-   * DeleteItem
-   * Finds the item in the list, and removes it from this list. Then, emits the changes in the list
-   * Requires a subject[] observable updateListEvent$ to be in the class
-   * Requires itemList to be included in class
-   * @param deleteItem - item that needs to be removed from current list
-   * @param itemList - current list that needs updating
-   */
-  deleteItem(deleteItem: any): void {
-    // Is it a document
-    if (!deleteItem) {
+  deleteContact(contact: Contact): Contact[] {
+    let pos = 0;
+    this.check = (!!((null ?? contact) || (undefined ?? contact)));
+
+    if (this.check) {
+      // sets the position of the original contact
+      pos = this.contactList.indexOf(contact);
+      // Update list with new contact if position is a real number and check is true
+      if (this.check && !(pos < 0)) {
+        // Delete selected contact, emit the updated list
+        this.contactList.splice(pos, 1);
+        // Next changes the subscribed current value
+        this.updateContactListEvent$.next(this.contactList.slice());
+      }
+    }
+    else {
       return;
     }
-    // Get index of current document, if there
-    const pos = this.itemList.indexOf(deleteItem);
-    if (pos < 0) {
-      return;
-    }
-    // Delete selected item, emit the updated list
-    this.itemList.splice(pos, 1);
-    this.updateListEvent$.next(this.itemList.slice());
   }
 
-  // addContact(newContact: Contact): void {
-  //   if (!newContact) {
+
+  // /**
+  //  * Add Item
+  //  * General method to add a new  a new object to the current itemList.
+  //  * Requires the getMaxId(itemList) method to be included in the class.
+  //  * Requires a subject[] observable updateListEvent$ to be in the class
+  //  * Requires itemList to be included in class
+  //  * @param newItem The item to be added to the ItemList
+  //  * @param itemList The current ItemList
+  //  */
+  // addItem(newItem: any): any[] {
+  //   if (!newItem) {
   //     return;
   //   }
-  //   newContact.id = String(this.contactMaxId++);
-  //   this.contactList.push(newDocument);
-  //   this.contactListUpdateEvent$.next(this.contactList.slice());
+  //   newItem.id = this.getMaxId(this.itemList);
+  //   this.itemList.push(newItem);
+  //   this.updateListEvent$.next(this.itemList.slice());
   // }
-
-  // updateContact(originalContact: Contact, newContact: Contact): void {
-  //   if (!originalContact || !newContact) {
+  //
+  // /**
+  //  * UpdateItem
+  //  * Uses a newItem to replace the originalItem including its Id number. Then, emits the updated list through an Observable
+  //  * Requires a subject[] observable updateListEvent$ to be in the class
+  //  * @param originalItem - original item to be altered
+  //  * @param newItem - new item for replacing the original
+  //  * @param itemList - current list that needs updating
+  //  */
+  // updateItem(originalItem: any, newItem: any): void {
+  //   if (!originalItem || !newItem) {
   //     return;
   //   }
-  //   // current index of document if there
-  //   const pos = this.contactList.indexOf(originalContact);
+  //   // current index of item if there
+  //   const pos = this.itemList.indexOf(originalItem);
   //   if (pos < 0) {
   //     return;
   //   }
-  //
-  //   newContact.id = originalContact.id;
-  //   this.contactList[pos] = newContact;
-  //   this.contactListUpdateEvent$.next(this.contactList.slice());
+  //   newItem.id = originalItem.id;
+  //   this.itemList[pos] = newItem;
+  //   this.updateListEvent$.next(this.itemList.slice());
   // }
-
-//   deleteContact(contact: Contact): Contact[] {
-//     // Is it a contact
-//     if (!contact) {
-//       return;
-//     }
-//     // Get index of current contact, if there
-//     const pos = this.contactList.indexOf(contact);
-//     if (pos < 0) {
-//       return;
-//     }
-//     // Delete selected contact, emit the updated list
-//     this.contactList.splice(pos, 1);
-//     // Next changes the subscribed current value
-//     this.contactListUpdateEvent.next(this.contactList.slice());
-//   }
+  //
+  // /**
+  //  * DeleteItem
+  //  * Finds the item in the list, and removes it from this list. Then, emits the changes in the list
+  //  * Requires a subject[] observable updateListEvent$ to be in the class
+  //  * Requires itemList to be included in class
+  //  * @param deleteItem - item that needs to be removed from current list
+  //  * @param itemList - current list that needs updating
+  //  */
+  // deleteItem(deleteItem: any): void {
+  //   // Is it a document
+  //   if (!deleteItem) {
+  //     return;
+  //   }
+  //   // Get index of current document, if there
+  //   const pos = this.itemList.indexOf(deleteItem);
+  //   if (pos < 0) {
+  //     return;
+  //   }
+  //   // Delete selected item, emit the updated list
+  //   this.itemList.splice(pos, 1);
+  //   this.updateListEvent$.next(this.itemList.slice());
+  // }
 }

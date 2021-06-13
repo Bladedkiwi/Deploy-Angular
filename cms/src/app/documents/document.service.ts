@@ -1,21 +1,23 @@
 import {Injectable} from '@angular/core';
-import {Document} from './document.model';
+import { Document } from './document.model';
 import {MOCKDOCUMENTS} from './MOCKDOCUMENTS';
-import {Subject} from "rxjs";
+import {Subject} from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DocumentService {
-  itemList: Document[] = [];
-  updateListEvent$ = new Subject<Document[]>();
+  documentList: Document[] = [];
+  updateDocumentListEvent$ = new Subject<Document[]>();
   selectedDocumentEvent$ = new Subject<Document>();
+  private check = true;
   // deleteSelectedDocumentEvent$ = new Subject<Document[]>();
-  documentMaxId: number;
+  // documentMaxId: number;
+
 
   constructor() {
-    this.itemList = MOCKDOCUMENTS;
-    this.documentMaxId = this.getMaxId(this.itemList);
+    this.documentList = MOCKDOCUMENTS;
+    // this.documentMaxId = this.getDocumentMaxId();
   }
 
   /**
@@ -23,27 +25,26 @@ export class DocumentService {
    * Method to retrieve the stored list of Documents.
    */
   getDocumentList(): Document[] {
-    return this.itemList;
+    return this.documentList;
   }
 
   /**
-   * GetDocumentListById -
+   * GetDocumentById -
    * Method to retrieve the request document by the given Id, which then returns that document
    * @param id The requested document's Id
    */
-  getDocumentListById(id: string): Document {
+  getDocumentById(id: string): Document {
     // console.log(id);
-    return this.itemList.find(document => (document.id === id ? document : null));
+    return this.documentList.find(document => (document.id === id ? document : null));
   }
 
   /**
    * getMaxId
    * Retrieves the max Id number from a given list.
    * Id must be a string, and included an item of the array
-   * @param maxIdList any provided list
    * @return maxId The number of the highest id in the list.
    */
-  getMaxId(maxIdList: any[]): number {
+  getDocumentMaxId(): number {
     let maxId = 0;
 
     const chkMax = (id: number) => {
@@ -52,124 +53,134 @@ export class DocumentService {
       }
     };
 
-    maxIdList.forEach((item) => {
+    this.documentList.forEach((item) => {
       chkMax(parseFloat(item.id));
     });
-
     return maxId;
   }
+
   /**
-   * Add Item
-   * General method to add a new  a new object to the current itemList.
-   * Requires the getMaxId(itemList) method to be included in the class.
-   * Requires a subject[] observable updateListEvent$ to be in the class
-   * Requires itemList to be included in class
-   * @param newItem The item to be added to the ItemList
-   * @param itemList The current ItemList
+   * AddDocument
+   * Adds a new Document to the current documents file.
+   * @param newDocument - user's file to be added
    */
-  addItem(newItem: any): any[] {
-    if (!newItem) {
-      return;
+  addDocument(newDocument: Document): void {
+
+    // Checks if newDocument is null/undefined before assigning a new Id
+    if (!((null ?? newDocument.id) || (undefined ?? newDocument.id))) {
+      newDocument.id = String((this.getDocumentMaxId() + 1));
+      this.documentList.push(newDocument);
+      this.updateDocumentListEvent$.next(this.documentList.slice());
     }
-    newItem.id = this.getMaxId(this.itemList);
-    this.itemList.push(newItem);
-    this.updateListEvent$.next(this.itemList.slice());
+    else {return; }
   }
 
   /**
-   * UpdateItem
-   * Uses a newItem to replace the originalItem including its Id number. Then, emits the updated list through an Observable
-   * Requires a subject[] observable updateListEvent$ to be in the class
-   * @param originalItem - original item to be altered
-   * @param newItem - new item for replacing the original
-   * @param itemList - current list that needs updating
+   * UpdateDocument
+   * Method to alter the original document with the new changes from the user.
+   * @param originalDocument - current stored document
+   * @param newDocument - updated document to be stored
    */
-  updateItem(originalItem: any, newItem: any): void {
-    if (!originalItem || !newItem) {
-      return;
+  updateDocument(originalDocument: Document, newDocument: Document): void {
+    let pos = 0;
+
+    // Checks null/undefined for original/new document
+    this.check = (!!((null ?? originalDocument.id) || (undefined ?? originalDocument.id) ||
+      ((null ?? newDocument.id) || (undefined ?? newDocument.id))));
+
+    if (this.check) {
+      // sets the position of the original document
+      pos = this.documentList.indexOf(originalDocument);
+      if (this.check && !(pos < 0)) {
+        // Update list with new document if position is a real number and check is true
+        newDocument.id = originalDocument.id;
+        this.documentList[pos] = newDocument;
+        this.updateDocumentListEvent$.next(this.documentList.slice());
+      }
     }
-    // current index of item if there
-    const pos = this.itemList.indexOf(originalItem);
-    if (pos < 0) {
-      return;
-    }
-    newItem.id = originalItem.id;
-    this.itemList[pos] = newItem;
-    this.updateListEvent$.next(this.itemList.slice());
+    else {return; }
   }
 
-  /**
-   * DeleteItem
-   * Finds the item in the list, and removes it from this list. Then, emits the changes in the list
-   * Requires a subject[] observable updateListEvent$ to be in the class
-   * Requires itemList to be included in class
-   * @param deleteItem - item that needs to be removed from current list
-   * @param itemList - current list that needs updating
-   */
-  deleteItem(deleteItem: any): void {
-    // Is it a document
-    if (!deleteItem) {
+  deleteDocument(document: Document): Document[] {
+    let pos = 0;
+    this.check = (!!((null ?? document) || (undefined ?? document)));
+
+    if (this.check) {
+      // sets the position of the original document
+      pos = this.documentList.indexOf(document);
+      // Update list with new document if position is a real number and check is true
+      if (this.check && !(pos < 0)) {
+        // Delete selected document, emit the updated list
+        this.documentList.splice(pos, 1);
+        // Next changes the subscribed current value
+        this.updateDocumentListEvent$.next(this.documentList.slice());
+      }
+    }
+    else {
       return;
     }
-    // Get index of current document, if there
-    const pos = this.itemList.indexOf(deleteItem);
-    if (pos < 0) {
-      return;
-    }
-    // Delete selected item, emit the updated list
-    this.itemList.splice(pos, 1);
-    this.updateListEvent$.next(this.itemList.slice());
   }
 
-
-  // /**
-  //  * AddDocument
-  //  * Adds a new Document to the current documents file.
-  //  * @param newDocument - user's file to be added
+      // /**
+  //  * Add Item
+  //  * General method to add a new  a new object to the current itemList.
+  //  * Requires the getMaxId(itemList) method to be included in the class.
+  //  * Requires a subject[] observable updateListEvent$ to be in the class
+  //  * Requires itemList to be included in class
+  //  * @param newItem The item to be added to the ItemList
+  //  * @param itemList The current ItemList
   //  */
-  // addDocument(newDocument: Document): void {
-  //   if (!newDocument) {
+  // addItem(newItem: any): any[] {
+  //   if (!newItem) {
   //     return;
   //   }
-  //   newDocument.id = String(this.documentMaxId++);
-  //   this.documentList.push(newDocument);
-  //   this.documentListUpdateEvent$.next(this.documentList.slice());
+  //   newItem.id = this.getMaxId(this.itemList);
+  //   this.itemList.push(newItem);
+  //   this.updateListEvent$.next(this.itemList.slice());
   // }
   //
   // /**
-  //  * UpdateDocument
-  //  * Method to alter the original document with the new changes from the user.
-  //  * @param originalDocument - current stored document
-  //  * @param newDocument - updated document to be stored
+  //  * UpdateItem
+  //  * Uses a newItem to replace the originalItem including its Id number. Then, emits the updated list through an Observable
+  //  * Requires a subject[] observable updateListEvent$ to be in the class
+  //  * @param originalItem - original item to be altered
+  //  * @param newItem - new item for replacing the original
+  //  * @param itemList - current list that needs updating
   //  */
-  // updateDocument(originalDocument: Document, newDocument: Document): void {
-  //   if (!originalDocument || !newDocument) {
+  // updateItem(originalItem: any, newItem: any): void {
+  //   if (!originalItem || !newItem) {
   //     return;
   //   }
-  //   // current index of document if there
-  //   const pos = this.documentList.indexOf(originalDocument);
+  //   // current index of item if there
+  //   const pos = this.itemList.indexOf(originalItem);
   //   if (pos < 0) {
   //     return;
   //   }
-  //
-  //   newDocument.id = originalDocument.id;
-  //   this.documentList[pos] = newDocument;
-  //   this.documentListUpdateEvent$.next(this.documentList.slice());
+  //   newItem.id = originalItem.id;
+  //   this.itemList[pos] = newItem;
+  //   this.updateListEvent$.next(this.itemList.slice());
   // }
-  // deleteDocument(document: Document): Document[] {
+  //
+  // /**
+  //  * DeleteItem
+  //  * Finds the item in the list, and removes it from this list. Then, emits the changes in the list
+  //  * Requires a subject[] observable updateListEvent$ to be in the class
+  //  * Requires itemList to be included in class
+  //  * @param deleteItem - item that needs to be removed from current list
+  //  * @param itemList - current list that needs updating
+  //  */
+  // deleteItem(deleteItem: any): void {
   //   // Is it a document
-  //   if (!document) {
+  //   if (!deleteItem) {
   //     return;
   //   }
   //   // Get index of current document, if there
-  //   const pos = this.documentList.indexOf(document);
+  //   const pos = this.itemList.indexOf(deleteItem);
   //   if (pos < 0) {
   //     return;
   //   }
-  //   // Delete selected document, emit the updated list
-  //   this.documentList.splice(pos, 1);
-  //   // Next changes the subscribed current value
-  //   this.documentListUpdateEvent$.next(this.documentList.slice());
-  //
+  //   // Delete selected item, emit the updated list
+  //   this.itemList.splice(pos, 1);
+  //   this.updateListEvent$.next(this.itemList.slice());
   // }
 }

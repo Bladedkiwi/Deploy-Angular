@@ -2,8 +2,8 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Document} from '../document.model';
 import {DocumentService} from '../document.service';
 import {ActivatedRoute, Router} from '@angular/router';
-import {WindRefService} from "../../wind-ref.service";
-import {Subscription} from "rxjs";
+import {WindRefService} from '../../wind-ref.service';
+import {Subscription} from 'rxjs';
 
 @Component({
   selector: 'cms-document-detail',
@@ -22,9 +22,11 @@ export class DocumentDetailComponent implements OnInit, OnDestroy {
   nativeWindow: any;
   private documentInfoSub: Subscription;
 
-  constructor(private documentService: DocumentService, private windRef: WindRefService, private actRoute: ActivatedRoute, private router: Router) {
-
-  }
+  constructor(
+    private documentService: DocumentService,
+    private windRef: WindRefService,
+    private actRoute: ActivatedRoute,
+    private router: Router) {}
 
   ngOnInit(): void {
 
@@ -32,7 +34,7 @@ export class DocumentDetailComponent implements OnInit, OnDestroy {
       (params) => {
         this.nextDocumentId = params.id;
         // console.log(this.nextDocumentId);
-        this.nextDocumentInfo = this.documentService.getDocumentListById(this.nextDocumentId);
+        this.nextDocumentInfo = this.documentService.getDocumentById(this.nextDocumentId);
       });
 
     this.nativeWindow = this.windRef.getNativeWindow();
@@ -43,7 +45,7 @@ export class DocumentDetailComponent implements OnInit, OnDestroy {
   }
 
   onDeleteDocument(): void {
-    this.documentService.deleteItem(this.nextDocumentInfo);
+    this.documentService.deleteDocument(this.nextDocumentInfo);
     this.router.navigate(['/documents']);
   }
 
