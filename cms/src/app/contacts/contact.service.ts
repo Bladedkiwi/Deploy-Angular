@@ -1,7 +1,9 @@
 import {Injectable} from '@angular/core';
+import { HttpClient, HttpHeaders} from '@angular/common/http';
 import {Contact} from './contact.model';
 import {MOCKCONTACTS} from './MOCKCONTACTS';
 import {Subject} from 'rxjs';
+import {Document} from "../documents/document.model";
 
 // @Injectable marks the class as on that takes part in dependency injection system
 /*
@@ -47,6 +49,7 @@ export class ContactService {
   selectedContactEvent$ = new Subject<Contact>();
   // contactListUpdateEvent$ = new Subject<Contact[]>();
   updateContactListEvent$ = new Subject<any[]>();
+  contactListMaxId: number;
   private contactMaxId: number;
   private check = true;
 
@@ -54,11 +57,46 @@ export class ContactService {
    * Constructor -
    * Stores the Contacts, from an external file, to a list for easy retrieval
    */
-  constructor() {
-    this.contactList = MOCKCONTACTS;
+  constructor(private httpClient: HttpClient) {
+    // this.contactList = MOCKCONTACTS;
     // this.contactMaxId = this.getContactMaxId(this.contactList);
-  }
+    httpClient.get<Contact[]>('https://wdd430-cms-hy-default-rtdb.firebaseio.com/contacts.json').subscribe(
+      (contactListDB: Contact[] ) => {
+        this.contactList = contactListDB;
+        this.contactListMaxId = this.getContactMaxId();
+        console.log('Hello Get Request');
+        this.contactList.sort((a, b) => {
+          if (a.id < b.id) {
+            return -1;
+          }
+          else if ( a.id > b.id) {
+            return 1;
+          }
+          else {
+            return 0;
+          }
+        });
+        this.updateContactListEvent$.next(this.contactList.slice());
+      },
+      error => {
+        console.log(error.message);
+      });
+      }
 
+
+      storeContactList(): void {
+        const contactArray = JSON.stringify(this.contactList);
+        const httpHeaderJson = new HttpHeaders('application/json');
+        this.httpClient.put('https://wdd430-cms-hy-default-rtdb.firebaseio.com/contacts.json',
+          contactArray, {headers: httpHeaderJson}).subscribe(
+          (response) => {
+            console.log('Hello Put Request');
+            if (typeof response === 'string') {
+              this.updateContactListEvent$.next(JSON.parse(response));
+            }
+          }
+        );
+      }
   /**
    * GetContactList -
    * Method that retrieves a list of all known contacts
@@ -73,6 +111,7 @@ export class ContactService {
    * @param id The requested Contact by Id
    */
   getContactById(id: string): Contact {
+    console.log(id);
     return this.contactList.find(contact => (contact.id === id ? contact : null));
   }
 
@@ -104,7 +143,8 @@ export class ContactService {
     if (!((null ?? newContact.id) || (undefined ?? newContact.id))) {
       newContact.id = String((this.getContactMaxId() + 1));
       this.contactList.push(newContact);
-      this.updateContactListEvent$.next(this.contactList.slice());
+      // this.updateContactListEvent$.next(this.contactList.slice());
+      this.storeContactList();
     } else {
       return;
     }
@@ -113,7 +153,7 @@ export class ContactService {
   updateContact(originalContact: Contact, newContact: Contact): void {
     let pos = 0;
 
-    // Checks null/undefined for original/new cotnact
+    // Checks null/undefined for original/new contact
     this.check = (!!((null ?? originalContact.id) || (undefined ?? originalContact.id) ||
       ((null ?? newContact.id) || (undefined ?? newContact.id))));
 
@@ -124,7 +164,8 @@ export class ContactService {
         // Update list with new contact if position is a real number and check is true
         newContact.id = originalContact.id;
         this.contactList[pos] = newContact;
-        this.updateContactListEvent$.next(this.contactList.slice());
+        // this.updateContactListEvent$.next(this.contactList.slice());
+        this.storeContactList();
       }
     }
     else {return; }
@@ -142,7 +183,8 @@ export class ContactService {
         // Delete selected contact, emit the updated list
         this.contactList.splice(pos, 1);
         // Next changes the subscribed current value
-        this.updateContactListEvent$.next(this.contactList.slice());
+        // this.updateContactListEvent$.next(this.contactList.slice());
+        this.storeContactList();
       }
     }
     else {

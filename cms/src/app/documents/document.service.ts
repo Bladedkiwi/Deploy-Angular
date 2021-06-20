@@ -1,25 +1,63 @@
 import {Injectable} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
+import {HttpHeaders} from '@angular/common/http';
 import { Document } from './document.model';
 import {MOCKDOCUMENTS} from './MOCKDOCUMENTS';
 import {Subject} from 'rxjs';
 
+
+
+
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class DocumentService {
   documentList: Document[] = [];
   updateDocumentListEvent$ = new Subject<Document[]>();
   selectedDocumentEvent$ = new Subject<Document>();
+  documentListMaxId: number;
   private check = true;
   // deleteSelectedDocumentEvent$ = new Subject<Document[]>();
   // documentMaxId: number;
 
 
-  constructor() {
-    this.documentList = MOCKDOCUMENTS;
-    // this.documentMaxId = this.getDocumentMaxId();
+  constructor(private httpClient: HttpClient) {
+    // this.documentList = MOCKDOCUMENTS;
+    httpClient.get<Document[]>('https://wdd430-cms-hy-default-rtdb.firebaseio.com/documents.json').subscribe(
+      (documentListDB: Document[] ) => {
+        this.documentList = documentListDB;
+        this.documentListMaxId = this.getDocumentMaxId();
+        console.log('Hello Get Request');
+        this.documentList.sort((a, b) => {
+          if (a.id < b.id) {
+            return -1;
+          }
+          else if ( a.id > b.id) {
+            return 1;
+            }
+          else {
+            return 0;
+            }
+          });
+        this.updateDocumentListEvent$.next(this.documentList.slice());
+      },
+    error => {
+        console.log(error.message);
+    });
   }
 
+  storeDocumentList(): void {
+    const docArray = JSON.stringify(this.documentList);
+    const httpHeaderJson = new HttpHeaders('application/json');
+    this.httpClient.put('https://wdd430-cms-hy-default-rtdb.firebaseio.com/documents.json', docArray, {headers: httpHeaderJson}).subscribe(
+      (response) => {
+
+        if (typeof response === 'string') {
+          this.updateDocumentListEvent$.next(JSON.parse(response));
+        }
+      }, error => {console.log(error.message); }
+      );
+  }
   /**
    * GetDocumentList -
    * Method to retrieve the stored list of Documents.
@@ -59,6 +97,8 @@ export class DocumentService {
     return maxId;
   }
 
+
+
   /**
    * AddDocument
    * Adds a new Document to the current documents file.
@@ -70,7 +110,7 @@ export class DocumentService {
     if (!((null ?? newDocument.id) || (undefined ?? newDocument.id))) {
       newDocument.id = String((this.getDocumentMaxId() + 1));
       this.documentList.push(newDocument);
-      this.updateDocumentListEvent$.next(this.documentList.slice());
+      this.storeDocumentList();
     }
     else {return; }
   }
@@ -95,7 +135,8 @@ export class DocumentService {
         // Update list with new document if position is a real number and check is true
         newDocument.id = originalDocument.id;
         this.documentList[pos] = newDocument;
-        this.updateDocumentListEvent$.next(this.documentList.slice());
+        // this.updateDocumentListEvent$.next(this.documentList.slice());
+        this.storeDocumentList();
       }
     }
     else {return; }
@@ -113,7 +154,8 @@ export class DocumentService {
         // Delete selected document, emit the updated list
         this.documentList.splice(pos, 1);
         // Next changes the subscribed current value
-        this.updateDocumentListEvent$.next(this.documentList.slice());
+        // this.updateDocumentListEvent$.next(this.documentList.slice());
+        this.storeDocumentList();
       }
     }
     else {

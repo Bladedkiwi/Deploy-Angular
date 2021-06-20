@@ -25,6 +25,7 @@ export class ContactListComponent implements OnInit {
 
   // List holder for current Contacts
   contactList: Contact[] = [];
+  term: string;
 
 
   /**
@@ -50,6 +51,10 @@ export class ContactListComponent implements OnInit {
    */
   onSelected(contact: Contact): void {
     this.contactService.selectedContactEvent$.next(contact);
+  }
+
+  search(value: string): void {
+    this.term = value;
   }
 
 }

@@ -1,26 +1,70 @@
+<div class="row">
+  <div class="col-xs-12 panel">
+    <div class="panel-heading">
+      <div class="row">
+        <h1 class="title pad-left-right">Contacts</h1>
+      </div>
+      <div class="row">
+        <div class="input-group pull-left pad-left-right col-xs-7">
+          <label for="searchBox"></label>
+          <input
+            type="text"
+            id="searchBox"
+            name="searchBox"
+            class="form-control pad-left-right"
+            size="150"
+            max="255"
+          #searchBox
+          (keyup)="search(searchBox.value)"
+          placeholder="Enter a search value">
+        <div class="glyphicon glyphicon-search input-group-addon" (click)="search(searchBox.value)"></div>
+        </div>
+        <div class="pull-right pad-left-right">
+          <a class="btn btn-success" [routerLink]="['new']">New Contact</a>
+        </div>
+      </div>
+    </div>
 <!--        Recipe List Item-->
-<div class="panel panel-default">
-  <div class="panel-heading clearfix">
-    <!--              Content Title-->
-    <h2 class="pull-left">Contacts</h2>
-    <button class="btn btn-success panel-info pull-right" routerLink="new" type="button">New Contact</button>
-  </div>
+<div class="panel-body">
 
-  <!--        Recipe List Item-->
-  <div class="panel-body">
+  <cms-contact-item
+    *ngFor="let contact of contactList | contactsFilter:term"
+    [nextContact]="contact"
+    dnd-draggable
+    [dragEnabled]="true"
+    [dragData]="contact"
+    [dropZones]="['contactGroup']"
+  ></cms-contact-item>
+  <!--    <cms-contact-item *ngFor="let contact of contactList"-->
+  <!--                      [nextContact]="contact"-->
+  <!--                      (click)="onSelected(this.contact)"></cms-contact-item>-->
 
-    <cms-contact-item
-      *ngFor="let contact of contactList"
-      [nextContact]="contact"
-      dnd-draggable
-      [dragEnabled]="true"
-      [dragData]="contact"
-      [dropZones]="['contactGroup']"
-    ></cms-contact-item>
-    <!--    <cms-contact-item *ngFor="let contact of contactList"-->
-    <!--                      [nextContact]="contact"-->
-    <!--                      (click)="onSelected(this.contact)"></cms-contact-item>-->
-
-  </div>
 </div>
 
+
+<!--&lt;!&ndash;        Recipe List Item&ndash;&gt;-->
+<!--<div class="panel panel-default">-->
+<!--  <div class="panel-heading clearfix">-->
+<!--    &lt;!&ndash;              Content Title&ndash;&gt;-->
+<!--    <h2 class="pull-left">Contacts</h2>-->
+<!--    <button class="btn btn-success panel-info pull-right" routerLink="new" type="button">New Contact</button>-->
+<!--  </div>-->
+
+  <!--        Recipe List Item-->
+<!--  <div class="panel-body">-->
+
+<!--    <cms-contact-item-->
+<!--      *ngFor="let contact of ( contactList | contactsFilter: term) "-->
+<!--      [nextContact]="contact"-->
+<!--      dnd-draggable-->
+<!--      [dragEnabled]="true"-->
+<!--      [dragData]="contact"-->
+<!--      [dropZones]="['contactGroup']"-->
+<!--    ></cms-contact-item>-->
+<!--    &lt;!&ndash;    <cms-contact-item *ngFor="let contact of contactList"&ndash;&gt;-->
+<!--    &lt;!&ndash;                      [nextContact]="contact"&ndash;&gt;-->
+<!--    &lt;!&ndash;                      (click)="onSelected(this.contact)"></cms-contact-item>&ndash;&gt;-->
+
+<!--  </div>-->
+</div>
+</div>

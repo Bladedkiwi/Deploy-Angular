@@ -7,8 +7,8 @@ import {DocumentsComponent} from './documents/documents.component';
 import {MessageListComponent} from './messages/message-list/message-list.component';
 import {DocumentEditComponent} from './documents/document-edit/document-edit.component';
 import {DocumentDetailComponent} from './documents/document-detail/document-detail.component';
-import {ContactEditComponent} from "./contacts/contact-edit/contact-edit.component";
-import {ContactDetailComponent} from "./contacts/contact-detail/contact-detail.component";
+import {ContactEditComponent} from './contacts/contact-edit/contact-edit.component';
+import {ContactDetailComponent} from './contacts/contact-detail/contact-detail.component';
 
 // The :id refers to a URL parameter named id. Or, the passed in parameter from the RouterLink directive
 
