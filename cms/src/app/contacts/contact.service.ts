@@ -3,7 +3,7 @@ import { HttpClient, HttpHeaders} from '@angular/common/http';
 import {Contact} from './contact.model';
 import {MOCKCONTACTS} from './MOCKCONTACTS';
 import {Subject} from 'rxjs';
-import {Document} from "../documents/document.model";
+
 
 // @Injectable marks the class as on that takes part in dependency injection system
 /*
@@ -60,11 +60,51 @@ export class ContactService {
   constructor(private httpClient: HttpClient) {
     // this.contactList = MOCKCONTACTS;
     // this.contactMaxId = this.getContactMaxId(this.contactList);
-    httpClient.get<Contact[]>('https://wdd430-cms-hy-default-rtdb.firebaseio.com/contacts.json').subscribe(
+    this.retrieveContactList();
+    // // console.log('retrieved');
+    // httpClient.get<Contact[]>('https://wdd430-cms-hy-default-rtdb.firebaseio.com/contacts.json').subscribe(
+    //   (contactListDB: Contact[] ) => {
+    //     this.contactList = contactListDB;
+    //     this.contactListMaxId = this.getContactMaxId();
+    //     console.log('Hello Get Request');
+    //     this.contactList.sort((a, b) => {
+    //       if (a.id < b.id) {
+    //         return -1;
+    //       }
+    //       else if ( a.id > b.id) {
+    //         return 1;
+    //       }
+    //       else {
+    //         return 0;
+    //       }
+    //     });
+    //     this.updateContactListEvent$.next(this.contactList.slice());
+    //   },
+    //   error => {
+    //     console.log(error.message);
+    //   });
+      }
+
+
+  storeContactList(): void {
+    const contactArray = JSON.stringify(this.contactList);
+    const httpHeaderJson = new HttpHeaders('application/json');
+    this.httpClient.put('https://wdd430-cms-hy-default-rtdb.firebaseio.com/contacts.json',
+      contactArray, {headers: httpHeaderJson}).subscribe(
+      (response: Contact[]) => {
+          this.updateContactListEvent$.next(response);
+      }, error => {console.log(error.message); }
+    );
+  }
+  /**
+   * GetContactList -
+   * Method that retrieves a list of all known contacts
+   */
+  retrieveContactList(): void {
+    this.httpClient.get<Contact[]>('https://wdd430-cms-hy-default-rtdb.firebaseio.com/contacts.json').subscribe(
       (contactListDB: Contact[] ) => {
         this.contactList = contactListDB;
         this.contactListMaxId = this.getContactMaxId();
-        console.log('Hello Get Request');
         this.contactList.sort((a, b) => {
           if (a.id < b.id) {
             return -1;
@@ -81,26 +121,9 @@ export class ContactService {
       error => {
         console.log(error.message);
       });
-      }
+  }
 
 
-      storeContactList(): void {
-        const contactArray = JSON.stringify(this.contactList);
-        const httpHeaderJson = new HttpHeaders('application/json');
-        this.httpClient.put('https://wdd430-cms-hy-default-rtdb.firebaseio.com/contacts.json',
-          contactArray, {headers: httpHeaderJson}).subscribe(
-          (response) => {
-            console.log('Hello Put Request');
-            if (typeof response === 'string') {
-              this.updateContactListEvent$.next(JSON.parse(response));
-            }
-          }
-        );
-      }
-  /**
-   * GetContactList -
-   * Method that retrieves a list of all known contacts
-   */
   getContactList(): Contact[] {
     return this.contactList;
   }
@@ -112,6 +135,11 @@ export class ContactService {
    */
   getContactById(id: string): Contact {
     console.log(id);
+    if (!((null ?? this.contactList ) || (undefined ?? this.contactList ))) {
+      console.log('got into if statement');
+      this.getContactList();
+    }
+    console.log(this.contactList.find(contact => (contact.id === id ? contact : null)));
     return this.contactList.find(contact => (contact.id === id ? contact : null));
   }
 

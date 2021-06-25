@@ -9,6 +9,7 @@ import {DocumentEditComponent} from './documents/document-edit/document-edit.com
 import {DocumentDetailComponent} from './documents/document-detail/document-detail.component';
 import {ContactEditComponent} from './contacts/contact-edit/contact-edit.component';
 import {ContactDetailComponent} from './contacts/contact-detail/contact-detail.component';
+import {DocumentService} from "./documents/document.service";
 
 // The :id refers to a URL parameter named id. Or, the passed in parameter from the RouterLink directive
 

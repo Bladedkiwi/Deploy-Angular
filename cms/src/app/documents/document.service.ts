@@ -1,9 +1,10 @@
-import {Injectable} from '@angular/core';
+import {Injectable, OnInit} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {HttpHeaders} from '@angular/common/http';
 import { Document } from './document.model';
 import {MOCKDOCUMENTS} from './MOCKDOCUMENTS';
 import {Subject} from 'rxjs';
+
 
 
 
@@ -23,11 +24,10 @@ export class DocumentService {
 
   constructor(private httpClient: HttpClient) {
     // this.documentList = MOCKDOCUMENTS;
-    httpClient.get<Document[]>('https://wdd430-cms-hy-default-rtdb.firebaseio.com/documents.json').subscribe(
+      httpClient.get<Document[]>('https://wdd430-cms-hy-default-rtdb.firebaseio.com/documents.json').subscribe(
       (documentListDB: Document[] ) => {
         this.documentList = documentListDB;
         this.documentListMaxId = this.getDocumentMaxId();
-        console.log('Hello Get Request');
         this.documentList.sort((a, b) => {
           if (a.id < b.id) {
             return -1;
@@ -50,11 +50,10 @@ export class DocumentService {
     const docArray = JSON.stringify(this.documentList);
     const httpHeaderJson = new HttpHeaders('application/json');
     this.httpClient.put('https://wdd430-cms-hy-default-rtdb.firebaseio.com/documents.json', docArray, {headers: httpHeaderJson}).subscribe(
-      (response) => {
+      (response: Document[]) => {
 
-        if (typeof response === 'string') {
-          this.updateDocumentListEvent$.next(JSON.parse(response));
-        }
+          this.updateDocumentListEvent$.next(response);
+
       }, error => {console.log(error.message); }
       );
   }
@@ -85,12 +84,12 @@ export class DocumentService {
   getDocumentMaxId(): number {
     let maxId = 0;
 
+    // Method to find the max number
     const chkMax = (id: number) => {
       if (id > maxId) {
         maxId = id;
       }
     };
-
     this.documentList.forEach((item) => {
       chkMax(parseFloat(item.id));
     });

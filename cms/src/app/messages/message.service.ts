@@ -2,23 +2,25 @@ import {EventEmitter, Injectable} from '@angular/core';
 import {Message} from './message.model';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {Subject} from 'rxjs';
+import {ContactService} from "../contacts/contact.service";
+import {Contact} from "../contacts/contact.model";
 
 @Injectable({
   providedIn: 'root'
 })
 export class MessageService {
   messageList: Message[] = [];
-  selectedMessageEvent = new Subject<Message>();
-  updateMessageListEvent = new Subject<Message[]>();
+  // selectedMessageEvent$ = new Subject<Message>();
+  updateMessageListEvent$ = new Subject<Message[]>();
   messageListMaxId: number;
 
-  constructor(private httpClient: HttpClient) {
+  constructor(private httpClient: HttpClient, private contactService: ContactService) {
     // this.messageList = MOCKMESSAGES;
+    this.contactService.retrieveContactList();
     httpClient.get<Message[]>('https://wdd430-cms-hy-default-rtdb.firebaseio.com/messages.json').subscribe(
       (messageListDB: Message[]) => {
         this.messageList = messageListDB;
         this.messageListMaxId = this.getMessageMaxId();
-        console.log('Hello Get Request');
         this.messageList.sort((a, b) => {
           if (a.id < b.id) {
             return -1;
@@ -28,7 +30,7 @@ export class MessageService {
             return 0;
           }
         });
-        this.updateMessageListEvent.next(this.messageList.slice());
+        this.updateMessageListEvent$.next(this.messageList.slice());
       },
       error => {
         console.log(error.message);
@@ -39,11 +41,8 @@ export class MessageService {
     const msgArray = JSON.stringify(this.messageList);
     const httpHeaderJson = new HttpHeaders('application/json');
     this.httpClient.put('https://wdd430-cms-hy-default-rtdb.firebaseio.com/messages.json', msgArray, {headers: httpHeaderJson}).subscribe(
-      (response) => {
-
-        if (typeof response === 'string') {
-          this.updateMessageListEvent.next(JSON.parse(response));
-        }
+      (data: Message[]) => {
+        this.updateMessageListEvent$.next(data);
       }, error => {
         console.log(error.message);
       }
@@ -80,13 +79,11 @@ export class MessageService {
   }
 
   addMessageToList(newMessage: Message): void {
-    // Checks if newDocument is null/undefined before assigning a new Id
-    if (!((null ?? newMessage.id) || (undefined ?? newMessage.id))) {
+    // Checks if newMessage is null/undefined before assigning a new Id
+    if (newMessage) {
       newMessage.id = String((this.getMessageMaxId() + 1));
       this.messageList.push(newMessage);
-      this.messageList.push(newMessage);
 
-      // this.updateMessageListEvent.emit(this.messageList.slice());
       this.storeMessageList();
     } else {
       return;
