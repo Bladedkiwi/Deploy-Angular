@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {Contact} from '../contact.model';
 import {ContactService} from '../contact.service';
+import {Subscription} from "rxjs";
 
 @Component({
   selector: 'cms-contact-list',
@@ -26,6 +27,7 @@ export class ContactListComponent implements OnInit {
   // List holder for current Contacts
   contactList: Contact[] = [];
   term: string;
+  contactSub: Subscription;
 
 
   /**
@@ -42,6 +44,7 @@ export class ContactListComponent implements OnInit {
    */
   ngOnInit(): void {
     this.contactList = this.contactService.getContactList();
+    this.contactSub = this.contactService.updateContactListEvent$.subscribe(contactList => this.contactList = contactList);
   }
 
   /**

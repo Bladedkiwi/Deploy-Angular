@@ -134,12 +134,6 @@ export class ContactService {
    * @param id The requested Contact by Id
    */
   getContactById(id: string): Contact {
-    console.log(id);
-    if (!((null ?? this.contactList ) || (undefined ?? this.contactList ))) {
-      console.log('got into if statement');
-      this.getContactList();
-    }
-    console.log(this.contactList.find(contact => (contact.id === id ? contact : null)));
     return this.contactList.find(contact => (contact.id === id ? contact : null));
   }
 
@@ -167,8 +161,8 @@ export class ContactService {
 
   addContact(newContact: Contact): void {
 
-    // Checks if newContact is null/undefined before assigning a new Id
-    if (!((null ?? newContact.id) || (undefined ?? newContact.id))) {
+    // Checks if newContact before assigning a new Id
+    if (newContact) {
       newContact.id = String((this.getContactMaxId() + 1));
       this.contactList.push(newContact);
       // this.updateContactListEvent$.next(this.contactList.slice());
