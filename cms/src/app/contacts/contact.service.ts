@@ -4,6 +4,7 @@ import {Contact} from './contact.model';
 import {MOCKCONTACTS} from './MOCKCONTACTS';
 import {Subject} from 'rxjs';
 
+// TODO: Add Catch blocks for all httpClient Calls
 
 // @Injectable marks the class as on that takes part in dependency injection system
 /*
@@ -52,6 +53,8 @@ export class ContactService {
   contactListMaxId: number;
   private contactMaxId: number;
   private check = true;
+  private contactEndpoint = 'http://localhost:3000/contacts';
+  private jsonHeader = new HttpHeaders({'Content-Type': 'application/json'});
 
   /**
    * Constructor -
@@ -62,7 +65,7 @@ export class ContactService {
     // this.contactMaxId = this.getContactMaxId(this.contactList);
     this.retrieveContactList();
     // // console.log('retrieved');
-    // httpClient.get<Contact[]>('https://wdd430-cms-hy-default-rtdb.firebaseio.com/contacts.json').subscribe(
+    // httpClient.get<Contact[]>(this.contactEndpoint).subscribe(
     //   (contactListDB: Contact[] ) => {
     //     this.contactList = contactListDB;
     //     this.contactListMaxId = this.getContactMaxId();
@@ -86,22 +89,25 @@ export class ContactService {
       }
 
 
-  storeContactList(): void {
-    const contactArray = JSON.stringify(this.contactList);
-    const httpHeaderJson = new HttpHeaders('application/json');
-    this.httpClient.put('https://wdd430-cms-hy-default-rtdb.firebaseio.com/contacts.json',
-      contactArray, {headers: httpHeaderJson}).subscribe(
-      (response: Contact[]) => {
-          this.updateContactListEvent$.next(response);
-      }, error => {console.log(error.message); }
-    );
-  }
+  // storeContactList(): void {
+  //   const contactArray = JSON.stringify(this.contactList);
+  //   const httpHeaderJson = new HttpHeaders('application/json');
+  //   this.httpClient.put(this.contactEndpoint,
+  //     contactArray, {headers: httpHeaderJson}).subscribe(
+  //     (response: Contact[]) => {
+  //         this.updateContactListEvent$.next(response);
+  //     }, error => {console.log(error.message); }
+  //   );
+  // }
+
+
+
   /**
    * GetContactList -
    * Method that retrieves a list of all known contacts
    */
   retrieveContactList(): void {
-    this.httpClient.get<Contact[]>('https://wdd430-cms-hy-default-rtdb.firebaseio.com/contacts.json').subscribe(
+    this.httpClient.get<Contact[]>(this.contactEndpoint).subscribe(
       (contactListDB: Contact[] ) => {
         this.contactList = contactListDB;
         this.contactListMaxId = this.getContactMaxId();
@@ -123,6 +129,26 @@ export class ContactService {
       });
   }
 
+  /**
+   * SortContactList
+   * Orders the list of documents by their id
+   *
+   */
+  sortContactList(): void {
+    this.contactList.sort((a, b) => {
+      if (a.id < b.id) {
+        return -1;
+      }
+      else if ( a.id > b.id) {
+        return 1;
+      }
+      else {
+        return 0;
+      }
+    });
+    this.updateContactListEvent$.next(this.contactList.slice());
+
+  }
 
   getContactList(): Contact[] {
     return this.contactList;
@@ -164,9 +190,16 @@ export class ContactService {
     // Checks if newContact before assigning a new Id
     if (newContact) {
       newContact.id = String((this.getContactMaxId() + 1));
-      this.contactList.push(newContact);
+      // this.contactList.push(newContact);
       // this.updateContactListEvent$.next(this.contactList.slice());
-      this.storeContactList();
+      // this.storeContactList();
+
+      this.httpClient.post<Contact>(this.contactEndpoint, newContact, {headers: this.jsonHeader }).subscribe(
+        (contact) => {
+          console.log(contact);
+          this.contactList.push(contact);
+          this.sortContactList();
+        });
     } else {
       return;
     }
@@ -185,9 +218,14 @@ export class ContactService {
       if (this.check && !(pos < 0)) {
         // Update list with new contact if position is a real number and check is true
         newContact.id = originalContact.id;
-        this.contactList[pos] = newContact;
+
+        this.httpClient.put((this.contactEndpoint + '/' + newContact.id), newContact, {headers: this.jsonHeader }).subscribe(
+          (res) => {
+            this.contactList[pos] = newContact;
+            this.sortContactList();
+          });
         // this.updateContactListEvent$.next(this.contactList.slice());
-        this.storeContactList();
+        // this.storeContactList();
       }
     }
     else {return; }
@@ -201,12 +239,18 @@ export class ContactService {
       // sets the position of the original contact
       pos = this.contactList.indexOf(contact);
       // Update list with new contact if position is a real number and check is true
+      // Delete selected contact, emit the updated list
       if (this.check && !(pos < 0)) {
-        // Delete selected contact, emit the updated list
+        this.httpClient.delete((this.contactEndpoint + '/' + contact.id)).subscribe(
+          (res) => {
+            this.contactList.splice(pos, 1);
+            this.sortContactList();
+          });
+
         this.contactList.splice(pos, 1);
         // Next changes the subscribed current value
         // this.updateContactListEvent$.next(this.contactList.slice());
-        this.storeContactList();
+        // this.storeContactList();
       }
     }
     else {

@@ -5,7 +5,10 @@ import { Document } from './document.model';
 import {MOCKDOCUMENTS} from './MOCKDOCUMENTS';
 import {Subject} from 'rxjs';
 
-
+// interface Response {
+//   message: string;
+//   documentList: Document[];
+// }
 
 
 
@@ -18,45 +21,50 @@ export class DocumentService {
   selectedDocumentEvent$ = new Subject<Document>();
   documentListMaxId: number;
   private check = true;
+  private docEndpoint = 'http://localhost:3000/documents';
+  private jsonHeader = new HttpHeaders({'Content-Type': 'application/json'});
   // deleteSelectedDocumentEvent$ = new Subject<Document[]>();
   // documentMaxId: number;
 
 
   constructor(private httpClient: HttpClient) {
     // this.documentList = MOCKDOCUMENTS;
-      httpClient.get<Document[]>('https://wdd430-cms-hy-default-rtdb.firebaseio.com/documents.json').subscribe(
-      (documentListDB: Document[] ) => {
+      httpClient.get<Document[]>(this.docEndpoint).subscribe(
+      (documentListDB ) => {
         this.documentList = documentListDB;
+        console.log(this.documentList);
         this.documentListMaxId = this.getDocumentMaxId();
-        this.documentList.sort((a, b) => {
-          if (a.id < b.id) {
-            return -1;
-          }
-          else if ( a.id > b.id) {
-            return 1;
-            }
-          else {
-            return 0;
-            }
-          });
-        this.updateDocumentListEvent$.next(this.documentList.slice());
+        this.sortDocumentList();
+        // this.documentList.sort((a, b) => {
+        //   if (a.id < b.id) {
+        //     return -1;
+        //   }
+        //   else if ( a.id > b.id) {
+        //     return 1;
+        //     }
+        //   else {
+        //     return 0;
+        //     }
+        //   });
+        // this.updateDocumentListEvent$.next(this.documentList.slice());
       },
     error => {
         console.log(error.message);
     });
   }
 
-  storeDocumentList(): void {
-    const docArray = JSON.stringify(this.documentList);
-    const httpHeaderJson = new HttpHeaders('application/json');
-    this.httpClient.put('https://wdd430-cms-hy-default-rtdb.firebaseio.com/documents.json', docArray, {headers: httpHeaderJson}).subscribe(
-      (response: Document[]) => {
-
-          this.updateDocumentListEvent$.next(response);
-
-      }, error => {console.log(error.message); }
-      );
-  }
+  // storeDocumentList(): void {
+  //   const docArray = JSON.stringify(this.documentList);
+  //   this.httpClient.put(this.docEndpoint, docArray, {headers: this.jsonHeader}).subscribe(
+  //       (response: Document[]) => {
+  //
+  //         this.updateDocumentListEvent$.next(response);
+  //
+  //       }, error => {
+  //         console.log(error.message);
+  //       }
+  //     );
+  // }
   /**
    * GetDocumentList -
    * Method to retrieve the stored list of Documents.
@@ -65,6 +73,26 @@ export class DocumentService {
     return this.documentList;
   }
 
+  /**
+   * SortDocumentList
+   * Orders the list of documents by their id
+   *
+   */
+  sortDocumentList(): void {
+    this.documentList.sort((a, b) => {
+      if (a.id < b.id) {
+        return -1;
+      }
+      else if ( a.id > b.id) {
+        return 1;
+      }
+      else {
+        return 0;
+      }
+    });
+    this.updateDocumentListEvent$.next(this.documentList.slice());
+
+  }
   /**
    * GetDocumentById -
    * Method to retrieve the request document by the given Id, which then returns that document
@@ -108,8 +136,19 @@ export class DocumentService {
     // Checks if newDocument is null/undefined before assigning a new Id
     if (!((null ?? newDocument.id) || (undefined ?? newDocument.id))) {
       newDocument.id = String((this.getDocumentMaxId() + 1));
-      this.documentList.push(newDocument);
-      this.storeDocumentList();
+      console.log(newDocument);
+
+      // Add Document to the server
+      this.httpClient.post<Document>(this.docEndpoint, newDocument, {headers: this.jsonHeader}).subscribe(
+        (document) => {
+          console.log(document);
+          this.documentList.push(document);
+          this.sortDocumentList();
+          // this.updateDocumentListEvent$.next(this.documentList.slice());
+        }
+      );
+
+      // this.storeDocumentList();
     }
     else {return; }
   }
@@ -123,7 +162,7 @@ export class DocumentService {
   updateDocument(originalDocument: Document, newDocument: Document): void {
     let pos = 0;
 
-    // Checks null/undefined for original/new document
+    // Boolean variable for checking null/undefined of original/new document
     this.check = (!!((null ?? originalDocument.id) || (undefined ?? originalDocument.id) ||
       ((null ?? newDocument.id) || (undefined ?? newDocument.id))));
 
@@ -131,11 +170,18 @@ export class DocumentService {
       // sets the position of the original document
       pos = this.documentList.indexOf(originalDocument);
       if (this.check && !(pos < 0)) {
+
         // Update list with new document if position is a real number and check is true
         newDocument.id = originalDocument.id;
-        this.documentList[pos] = newDocument;
+
+        this.httpClient.put(this.docEndpoint + '/' + newDocument.id, newDocument, {headers: this.jsonHeader}).subscribe(
+          (res) =>  {
+            this.documentList[pos] = newDocument;
+            this.sortDocumentList();
+        });
+
         // this.updateDocumentListEvent$.next(this.documentList.slice());
-        this.storeDocumentList();
+        // this.storeDocumentList();
       }
     }
     else {return; }
@@ -143,6 +189,7 @@ export class DocumentService {
 
   deleteDocument(document: Document): Document[] {
     let pos = 0;
+    // Boolean to check null/undefined
     this.check = (!!((null ?? document) || (undefined ?? document)));
 
     if (this.check) {
@@ -150,11 +197,17 @@ export class DocumentService {
       pos = this.documentList.indexOf(document);
       // Update list with new document if position is a real number and check is true
       if (this.check && !(pos < 0)) {
-        // Delete selected document, emit the updated list
-        this.documentList.splice(pos, 1);
+        // Delete selected document from database
+        this.httpClient.delete((this.docEndpoint + '/' + document.id)).subscribe(
+          (res) => {
+            this.documentList.splice(pos, 1);
+            this.sortDocumentList();
+          });
+
+        // this.documentList.splice(pos, 1);
         // Next changes the subscribed current value
         // this.updateDocumentListEvent$.next(this.documentList.slice());
-        this.storeDocumentList();
+        // this.storeDocumentList();
       }
     }
     else {

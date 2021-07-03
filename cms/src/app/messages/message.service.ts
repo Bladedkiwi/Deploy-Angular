@@ -3,7 +3,7 @@ import {Message} from './message.model';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {Subject} from 'rxjs';
 import {ContactService} from "../contacts/contact.service";
-import {Contact} from "../contacts/contact.model";
+
 
 @Injectable({
   providedIn: 'root'
@@ -13,40 +13,64 @@ export class MessageService {
   // selectedMessageEvent$ = new Subject<Message>();
   updateMessageListEvent$ = new Subject<Message[]>();
   messageListMaxId: number;
+  private msgEndpoint = 'http://localhost:3000/messages';
+  private jsonHeader = new HttpHeaders({'Content-Type': 'application/json'});
 
   constructor(private httpClient: HttpClient, private contactService: ContactService) {
     // this.messageList = MOCKMESSAGES;
     this.contactService.retrieveContactList();
-    httpClient.get<Message[]>('https://wdd430-cms-hy-default-rtdb.firebaseio.com/messages.json').subscribe(
+    httpClient.get<Message[]>(this.msgEndpoint).subscribe(
       (messageListDB: Message[]) => {
         this.messageList = messageListDB;
         this.messageListMaxId = this.getMessageMaxId();
-        this.messageList.sort((a, b) => {
-          if (a.id < b.id) {
-            return -1;
-          } else if (a.id > b.id) {
-            return 1;
-          } else {
-            return 0;
-          }
-        });
-        this.updateMessageListEvent$.next(this.messageList.slice());
+        // this.messageList.sort((a, b) => {
+        //   if (a.id < b.id) {
+        //     return -1;
+        //   } else if (a.id > b.id) {
+        //     return 1;
+        //   } else {
+        //     return 0;
+        //   }
+        // });
+        this.sortMessageList();
+        // this.updateMessageListEvent$.next(this.messageList.slice());
       },
       error => {
         console.log(error.message);
       });
   }
 
-  storeMessageList(): void {
-    const msgArray = JSON.stringify(this.messageList);
-    const httpHeaderJson = new HttpHeaders('application/json');
-    this.httpClient.put('https://wdd430-cms-hy-default-rtdb.firebaseio.com/messages.json', msgArray, {headers: httpHeaderJson}).subscribe(
-      (data: Message[]) => {
-        this.updateMessageListEvent$.next(data);
-      }, error => {
-        console.log(error.message);
+  // storeMessageList(): void {
+  //   const msgArray = JSON.stringify(this.messageList);
+  //   const httpHeaderJson = new HttpHeaders('application/json');
+  //   this.httpClient.put(this.msgEndpoint, msgArray, {headers: httpHeaderJson}).subscribe(
+  //     (data: Message[]) => {
+  //       this.updateMessageListEvent$.next(data);
+  //     }, error => {
+  //       console.log(error.message);
+  //     }
+  //   );
+  // }
+
+  /**
+   * SortMessageList
+   * Orders the list of documents by their id
+   *
+   */
+  sortMessageList(): void {
+    this.messageList.sort((a, b) => {
+      if (a.id < b.id) {
+        return -1;
       }
-    );
+      else if ( a.id > b.id) {
+        return 1;
+      }
+      else {
+        return 0;
+      }
+    });
+    this.updateMessageListEvent$.next(this.messageList.slice());
+
   }
 
   /**
@@ -84,7 +108,17 @@ export class MessageService {
       newMessage.id = String((this.getMessageMaxId() + 1));
       this.messageList.push(newMessage);
 
-      this.storeMessageList();
+      // Add Document to the server
+      this.httpClient.post<Message>(this.msgEndpoint, newMessage, {headers: this.jsonHeader}).subscribe(
+        (message) => {
+          console.log(message);
+          this.messageList.push(message);
+          this.sortMessageList();
+          // this.updateDocumentListEvent$.next(this.documentList.slice());
+        }
+      );
+
+      // this.storeMessageList();
     } else {
       return;
     }

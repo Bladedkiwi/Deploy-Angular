@@ -24,6 +24,7 @@
     "cookie-parser": "^1.4.5",
     "express": "^4.17.1",
     "glyphicons": "^0.2.0",
+    "mongodb": "^3.6.9",
     "morgan": "^1.10.0",
     "ng2-dnd": "^5.0.2",
     "regex": "^0.1.1",
